@@ -9,7 +9,23 @@
 * 🟢 You can import this file directly.
 */
 
+export const HabitCategory = {
+  MOVEMENT: 'MOVEMENT',
+  HYDRATION: 'HYDRATION',
+  SLEEP: 'SLEEP',
+  MINDFULNESS: 'MINDFULNESS',
+  NUTRITION: 'NUTRITION',
+  RECOVERY: 'RECOVERY',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type HabitCategory = (typeof HabitCategory)[keyof typeof HabitCategory]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const HabitFrequency = {
+  DAILY: 'DAILY',
+  WEEKDAYS: 'WEEKDAYS',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type HabitFrequency = (typeof HabitFrequency)[keyof typeof HabitFrequency]

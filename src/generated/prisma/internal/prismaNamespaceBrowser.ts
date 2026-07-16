@@ -51,7 +51,12 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  Profile: 'Profile',
+  Habit: 'Habit',
+  HabitEntry: 'HabitEntry',
+  DailyCheckIn: 'DailyCheckIn',
+  DailyNote: 'DailyNote',
+  WeeklyReview: 'WeeklyReview'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,4 +73,114 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const ProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  displayName: 'displayName',
+  timezone: 'timezone',
+  onboardingDone: 'onboardingDone',
+  waterGoalMl: 'waterGoalMl',
+  movementGoalMin: 'movementGoalMin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const HabitScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  name: 'name',
+  category: 'category',
+  frequency: 'frequency',
+  targetDays: 'targetDays',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  archivedAt: 'archivedAt'
+} as const
+
+export type HabitScalarFieldEnum = (typeof HabitScalarFieldEnum)[keyof typeof HabitScalarFieldEnum]
+
+
+export const HabitEntryScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  habitId: 'habitId',
+  date: 'date',
+  completed: 'completed',
+  createdAt: 'createdAt'
+} as const
+
+export type HabitEntryScalarFieldEnum = (typeof HabitEntryScalarFieldEnum)[keyof typeof HabitEntryScalarFieldEnum]
+
+
+export const DailyCheckInScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  date: 'date',
+  moodScore: 'moodScore',
+  energyScore: 'energyScore',
+  sleepQualityScore: 'sleepQualityScore',
+  stressScore: 'stressScore',
+  waterMl: 'waterMl',
+  movementMin: 'movementMin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyCheckInScalarFieldEnum = (typeof DailyCheckInScalarFieldEnum)[keyof typeof DailyCheckInScalarFieldEnum]
+
+
+export const DailyNoteScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  date: 'date',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyNoteScalarFieldEnum = (typeof DailyNoteScalarFieldEnum)[keyof typeof DailyNoteScalarFieldEnum]
+
+
+export const WeeklyReviewScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  weekStart: 'weekStart',
+  wins: 'wins',
+  challenges: 'challenges',
+  nextWeekFocus: 'nextWeekFocus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WeeklyReviewScalarFieldEnum = (typeof WeeklyReviewScalarFieldEnum)[keyof typeof WeeklyReviewScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

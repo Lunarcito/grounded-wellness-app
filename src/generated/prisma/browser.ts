@@ -17,4 +17,33 @@ import * as Prisma from './internal/prismaNamespaceBrowser'
 export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
-
+/**
+ * Model Profile
+ * 
+ */
+export type Profile = Prisma.ProfileModel
+/**
+ * Model Habit
+ * 
+ */
+export type Habit = Prisma.HabitModel
+/**
+ * Model HabitEntry
+ * 
+ */
+export type HabitEntry = Prisma.HabitEntryModel
+/**
+ * Model DailyCheckIn
+ * 
+ */
+export type DailyCheckIn = Prisma.DailyCheckInModel
+/**
+ * Model DailyNote
+ * 
+ */
+export type DailyNote = Prisma.DailyNoteModel
+/**
+ * Model WeeklyReview
+ * 
+ */
+export type WeeklyReview = Prisma.WeeklyReviewModel
