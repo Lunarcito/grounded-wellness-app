@@ -190,8 +190,8 @@ export type HabitEntryWhereInput = {
   date?: Prisma.DateTimeFilter<"HabitEntry"> | Date | string
   completed?: Prisma.BoolFilter<"HabitEntry"> | boolean
   createdAt?: Prisma.DateTimeFilter<"HabitEntry"> | Date | string
-  profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   habit?: Prisma.XOR<Prisma.HabitScalarRelationFilter, Prisma.HabitWhereInput>
+  profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
 }
 
 export type HabitEntryOrderByWithRelationInput = {
@@ -201,8 +201,8 @@ export type HabitEntryOrderByWithRelationInput = {
   date?: Prisma.SortOrder
   completed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  profile?: Prisma.ProfileOrderByWithRelationInput
   habit?: Prisma.HabitOrderByWithRelationInput
+  profile?: Prisma.ProfileOrderByWithRelationInput
 }
 
 export type HabitEntryWhereUniqueInput = Prisma.AtLeast<{
@@ -216,8 +216,8 @@ export type HabitEntryWhereUniqueInput = Prisma.AtLeast<{
   date?: Prisma.DateTimeFilter<"HabitEntry"> | Date | string
   completed?: Prisma.BoolFilter<"HabitEntry"> | boolean
   createdAt?: Prisma.DateTimeFilter<"HabitEntry"> | Date | string
-  profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   habit?: Prisma.XOR<Prisma.HabitScalarRelationFilter, Prisma.HabitWhereInput>
+  profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
 }, "id" | "habitId_date">
 
 export type HabitEntryOrderByWithAggregationInput = {
@@ -249,8 +249,8 @@ export type HabitEntryCreateInput = {
   date: Date | string
   completed?: boolean
   createdAt?: Date | string
-  profile: Prisma.ProfileCreateNestedOneWithoutHabitEntriesInput
   habit: Prisma.HabitCreateNestedOneWithoutEntriesInput
+  profile: Prisma.ProfileCreateNestedOneWithoutHabitEntriesInput
 }
 
 export type HabitEntryUncheckedCreateInput = {
@@ -267,8 +267,8 @@ export type HabitEntryUpdateInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.ProfileUpdateOneRequiredWithoutHabitEntriesNestedInput
   habit?: Prisma.HabitUpdateOneRequiredWithoutEntriesNestedInput
+  profile?: Prisma.ProfileUpdateOneRequiredWithoutHabitEntriesNestedInput
 }
 
 export type HabitEntryUncheckedUpdateInput = {
@@ -600,8 +600,8 @@ export type HabitEntrySelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   date?: boolean
   completed?: boolean
   createdAt?: boolean
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["habitEntry"]>
 
 export type HabitEntrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -611,8 +611,8 @@ export type HabitEntrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   date?: boolean
   completed?: boolean
   createdAt?: boolean
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["habitEntry"]>
 
 export type HabitEntrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -622,8 +622,8 @@ export type HabitEntrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   date?: boolean
   completed?: boolean
   createdAt?: boolean
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["habitEntry"]>
 
 export type HabitEntrySelectScalar = {
@@ -637,23 +637,23 @@ export type HabitEntrySelectScalar = {
 
 export type HabitEntryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "habitId" | "date" | "completed" | "createdAt", ExtArgs["result"]["habitEntry"]>
 export type HabitEntryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 export type HabitEntryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 export type HabitEntryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 
 export type $HabitEntryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "HabitEntry"
   objects: {
-    profile: Prisma.$ProfilePayload<ExtArgs>
     habit: Prisma.$HabitPayload<ExtArgs>
+    profile: Prisma.$ProfilePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1056,8 +1056,8 @@ readonly fields: HabitEntryFieldRefs;
  */
 export interface Prisma__HabitEntryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   habit<T extends Prisma.HabitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HabitDefaultArgs<ExtArgs>>): Prisma.Prisma__HabitClient<runtime.Types.Result.GetResult<Prisma.$HabitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

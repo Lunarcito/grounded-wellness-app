@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -12,68 +7,49 @@ datasource db {
   provider = "postgresql"
 }
 
-enum HabitCategory {
-  MOVEMENT
-  HYDRATION
-  SLEEP
-  MINDFULNESS
-  NUTRITION
-  RECOVERY
-  CUSTOM
-}
-
-enum HabitFrequency {
-  DAILY
-  WEEKDAYS
-  CUSTOM
-}
-
 model Profile {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  displayName        String?
-  timezone           String   @default("UTC")
-  onboardingDone     Boolean  @default(false)
-  waterGoalMl        Int      @default(2000)
-  movementGoalMin    Int      @default(30)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  habits             Habit[]
-  habitEntries       HabitEntry[]
-  dailyCheckIns      DailyCheckIn[]
-  dailyNotes         DailyNote[]
-  weeklyReviews      WeeklyReview[]
+  id              String         @id
+  displayName     String?
+  timezone        String         @default("UTC")
+  onboardingDone  Boolean        @default(false)
+  waterGoalMl     Int            @default(2000)
+  movementGoalMin Int            @default(30)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  email           String         @unique
+  dailyCheckIns   DailyCheckIn[]
+  dailyNotes      DailyNote[]
+  habits          Habit[]
+  habitEntries    HabitEntry[]
+  weeklyReviews   WeeklyReview[]
 }
 
 model Habit {
-  id              String         @id @default(cuid())
-  profileId       String
-  name            String
-  category        HabitCategory  @default(CUSTOM)
-  frequency       HabitFrequency @default(DAILY)
-  targetDays      Int?
-  isActive        Boolean        @default(true)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  archivedAt      DateTime?
-
-  profile         Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  entries         HabitEntry[]
+  id         String         @id @default(cuid())
+  profileId  String
+  name       String
+  category   HabitCategory  @default(CUSTOM)
+  frequency  HabitFrequency @default(DAILY)
+  targetDays Int?
+  isActive   Boolean        @default(true)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  archivedAt DateTime?
+  profile    Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  entries    HabitEntry[]
 
   @@index([profileId])
 }
 
 model HabitEntry {
-  id              String   @id @default(cuid())
-  profileId       String
-  habitId         String
-  date            DateTime
-  completed       Boolean  @default(false)
-  createdAt       DateTime @default(now())
-
-  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  habit           Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  profileId String
+  habitId   String
+  date      DateTime
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@unique([habitId, date])
   @@index([profileId, date])
@@ -91,7 +67,6 @@ model DailyCheckIn {
   movementMin       Int?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
   profile           Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@unique([profileId, date])
@@ -99,31 +74,45 @@ model DailyCheckIn {
 }
 
 model DailyNote {
-  id              String   @id @default(cuid())
-  profileId       String
-  date            DateTime
-  note            String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  profileId String
+  date      DateTime
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@unique([profileId, date])
   @@index([profileId, date])
 }
 
 model WeeklyReview {
-  id              String   @id @default(cuid())
-  profileId       String
-  weekStart       DateTime
-  wins            String?
-  challenges      String?
-  nextWeekFocus   String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  profileId     String
+  weekStart     DateTime
+  wins          String?
+  challenges    String?
+  nextWeekFocus String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@unique([profileId, weekStart])
   @@index([profileId, weekStart])
+}
+
+enum HabitCategory {
+  MOVEMENT
+  HYDRATION
+  SLEEP
+  MINDFULNESS
+  NUTRITION
+  RECOVERY
+  CUSTOM
+}
+
+enum HabitFrequency {
+  DAILY
+  WEEKDAYS
+  CUSTOM
 }

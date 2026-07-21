@@ -894,14 +894,14 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const ProfileScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   displayName: 'displayName',
   timezone: 'timezone',
   onboardingDone: 'onboardingDone',
   waterGoalMl: 'waterGoalMl',
   movementGoalMin: 'movementGoalMin',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  email: 'email'
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]

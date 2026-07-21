@@ -38,7 +38,6 @@ export type ProfileSumAggregateOutputType = {
 
 export type ProfileMinAggregateOutputType = {
   id: string | null
-  userId: string | null
   displayName: string | null
   timezone: string | null
   onboardingDone: boolean | null
@@ -46,11 +45,11 @@ export type ProfileMinAggregateOutputType = {
   movementGoalMin: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  email: string | null
 }
 
 export type ProfileMaxAggregateOutputType = {
   id: string | null
-  userId: string | null
   displayName: string | null
   timezone: string | null
   onboardingDone: boolean | null
@@ -58,11 +57,11 @@ export type ProfileMaxAggregateOutputType = {
   movementGoalMin: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  email: string | null
 }
 
 export type ProfileCountAggregateOutputType = {
   id: number
-  userId: number
   displayName: number
   timezone: number
   onboardingDone: number
@@ -70,6 +69,7 @@ export type ProfileCountAggregateOutputType = {
   movementGoalMin: number
   createdAt: number
   updatedAt: number
+  email: number
   _all: number
 }
 
@@ -86,7 +86,6 @@ export type ProfileSumAggregateInputType = {
 
 export type ProfileMinAggregateInputType = {
   id?: true
-  userId?: true
   displayName?: true
   timezone?: true
   onboardingDone?: true
@@ -94,11 +93,11 @@ export type ProfileMinAggregateInputType = {
   movementGoalMin?: true
   createdAt?: true
   updatedAt?: true
+  email?: true
 }
 
 export type ProfileMaxAggregateInputType = {
   id?: true
-  userId?: true
   displayName?: true
   timezone?: true
   onboardingDone?: true
@@ -106,11 +105,11 @@ export type ProfileMaxAggregateInputType = {
   movementGoalMin?: true
   createdAt?: true
   updatedAt?: true
+  email?: true
 }
 
 export type ProfileCountAggregateInputType = {
   id?: true
-  userId?: true
   displayName?: true
   timezone?: true
   onboardingDone?: true
@@ -118,6 +117,7 @@ export type ProfileCountAggregateInputType = {
   movementGoalMin?: true
   createdAt?: true
   updatedAt?: true
+  email?: true
   _all?: true
 }
 
@@ -209,7 +209,6 @@ export type ProfileGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type ProfileGroupByOutputType = {
   id: string
-  userId: string
   displayName: string | null
   timezone: string
   onboardingDone: boolean
@@ -217,6 +216,7 @@ export type ProfileGroupByOutputType = {
   movementGoalMin: number
   createdAt: Date
   updatedAt: Date
+  email: string
   _count: ProfileCountAggregateOutputType | null
   _avg: ProfileAvgAggregateOutputType | null
   _sum: ProfileSumAggregateOutputType | null
@@ -244,7 +244,6 @@ export type ProfileWhereInput = {
   OR?: Prisma.ProfileWhereInput[]
   NOT?: Prisma.ProfileWhereInput | Prisma.ProfileWhereInput[]
   id?: Prisma.StringFilter<"Profile"> | string
-  userId?: Prisma.StringFilter<"Profile"> | string
   displayName?: Prisma.StringNullableFilter<"Profile"> | string | null
   timezone?: Prisma.StringFilter<"Profile"> | string
   onboardingDone?: Prisma.BoolFilter<"Profile"> | boolean
@@ -252,16 +251,16 @@ export type ProfileWhereInput = {
   movementGoalMin?: Prisma.IntFilter<"Profile"> | number
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
-  habits?: Prisma.HabitListRelationFilter
-  habitEntries?: Prisma.HabitEntryListRelationFilter
+  email?: Prisma.StringFilter<"Profile"> | string
   dailyCheckIns?: Prisma.DailyCheckInListRelationFilter
   dailyNotes?: Prisma.DailyNoteListRelationFilter
+  habits?: Prisma.HabitListRelationFilter
+  habitEntries?: Prisma.HabitEntryListRelationFilter
   weeklyReviews?: Prisma.WeeklyReviewListRelationFilter
 }
 
 export type ProfileOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardingDone?: Prisma.SortOrder
@@ -269,16 +268,17 @@ export type ProfileOrderByWithRelationInput = {
   movementGoalMin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  habits?: Prisma.HabitOrderByRelationAggregateInput
-  habitEntries?: Prisma.HabitEntryOrderByRelationAggregateInput
+  email?: Prisma.SortOrder
   dailyCheckIns?: Prisma.DailyCheckInOrderByRelationAggregateInput
   dailyNotes?: Prisma.DailyNoteOrderByRelationAggregateInput
+  habits?: Prisma.HabitOrderByRelationAggregateInput
+  habitEntries?: Prisma.HabitEntryOrderByRelationAggregateInput
   weeklyReviews?: Prisma.WeeklyReviewOrderByRelationAggregateInput
 }
 
 export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  userId?: string
+  email?: string
   AND?: Prisma.ProfileWhereInput | Prisma.ProfileWhereInput[]
   OR?: Prisma.ProfileWhereInput[]
   NOT?: Prisma.ProfileWhereInput | Prisma.ProfileWhereInput[]
@@ -289,16 +289,15 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   movementGoalMin?: Prisma.IntFilter<"Profile"> | number
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
-  habits?: Prisma.HabitListRelationFilter
-  habitEntries?: Prisma.HabitEntryListRelationFilter
   dailyCheckIns?: Prisma.DailyCheckInListRelationFilter
   dailyNotes?: Prisma.DailyNoteListRelationFilter
+  habits?: Prisma.HabitListRelationFilter
+  habitEntries?: Prisma.HabitEntryListRelationFilter
   weeklyReviews?: Prisma.WeeklyReviewListRelationFilter
-}, "id" | "userId">
+}, "id" | "email">
 
 export type ProfileOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardingDone?: Prisma.SortOrder
@@ -306,6 +305,7 @@ export type ProfileOrderByWithAggregationInput = {
   movementGoalMin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
   _avg?: Prisma.ProfileAvgOrderByAggregateInput
   _max?: Prisma.ProfileMaxOrderByAggregateInput
@@ -318,7 +318,6 @@ export type ProfileScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProfileScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProfileScalarWhereWithAggregatesInput | Prisma.ProfileScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Profile"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   displayName?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   timezone?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   onboardingDone?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
@@ -326,11 +325,11 @@ export type ProfileScalarWhereWithAggregatesInput = {
   movementGoalMin?: Prisma.IntWithAggregatesFilter<"Profile"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
+  email?: Prisma.StringWithAggregatesFilter<"Profile"> | string
 }
 
 export type ProfileCreateInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -338,16 +337,16 @@ export type ProfileCreateInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
-  habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteCreateNestedManyWithoutProfileInput
+  habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
+  habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -355,16 +354,16 @@ export type ProfileUncheckedCreateInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
-  habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteUncheckedCreateNestedManyWithoutProfileInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
+  habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -372,16 +371,16 @@ export type ProfileUpdateInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
-  habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUpdateManyWithoutProfileNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
+  habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -389,16 +388,16 @@ export type ProfileUncheckedUpdateInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
-  habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUncheckedUpdateManyWithoutProfileNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
+  habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateManyInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -406,11 +405,11 @@ export type ProfileCreateManyInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  email: string
 }
 
 export type ProfileUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -418,11 +417,11 @@ export type ProfileUpdateManyMutationInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfileUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -430,11 +429,11 @@ export type ProfileUncheckedUpdateManyInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfileCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardingDone?: Prisma.SortOrder
@@ -442,6 +441,7 @@ export type ProfileCountOrderByAggregateInput = {
   movementGoalMin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  email?: Prisma.SortOrder
 }
 
 export type ProfileAvgOrderByAggregateInput = {
@@ -451,7 +451,6 @@ export type ProfileAvgOrderByAggregateInput = {
 
 export type ProfileMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardingDone?: Prisma.SortOrder
@@ -459,11 +458,11 @@ export type ProfileMaxOrderByAggregateInput = {
   movementGoalMin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  email?: Prisma.SortOrder
 }
 
 export type ProfileMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardingDone?: Prisma.SortOrder
@@ -471,6 +470,7 @@ export type ProfileMinOrderByAggregateInput = {
   movementGoalMin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  email?: Prisma.SortOrder
 }
 
 export type ProfileSumOrderByAggregateInput = {
@@ -578,8 +578,7 @@ export type ProfileUpdateOneRequiredWithoutWeeklyReviewsNestedInput = {
 }
 
 export type ProfileCreateWithoutHabitsInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -587,15 +586,15 @@ export type ProfileCreateWithoutHabitsInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteCreateNestedManyWithoutProfileInput
+  habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutHabitsInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -603,9 +602,10 @@ export type ProfileUncheckedCreateWithoutHabitsInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteUncheckedCreateNestedManyWithoutProfileInput
+  habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedCreateNestedManyWithoutProfileInput
 }
 
@@ -627,7 +627,6 @@ export type ProfileUpdateToOneWithWhereWithoutHabitsInput = {
 
 export type ProfileUpdateWithoutHabitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -635,15 +634,15 @@ export type ProfileUpdateWithoutHabitsInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUpdateManyWithoutProfileNestedInput
+  habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutHabitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -651,15 +650,15 @@ export type ProfileUncheckedUpdateWithoutHabitsInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUncheckedUpdateManyWithoutProfileNestedInput
+  habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutHabitEntriesInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -667,15 +666,15 @@ export type ProfileCreateWithoutHabitEntriesInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteCreateNestedManyWithoutProfileInput
+  habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutHabitEntriesInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -683,9 +682,10 @@ export type ProfileUncheckedCreateWithoutHabitEntriesInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteUncheckedCreateNestedManyWithoutProfileInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedCreateNestedManyWithoutProfileInput
 }
 
@@ -707,7 +707,6 @@ export type ProfileUpdateToOneWithWhereWithoutHabitEntriesInput = {
 
 export type ProfileUpdateWithoutHabitEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -715,15 +714,15 @@ export type ProfileUpdateWithoutHabitEntriesInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUpdateManyWithoutProfileNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutHabitEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -731,15 +730,15 @@ export type ProfileUncheckedUpdateWithoutHabitEntriesInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUncheckedUpdateManyWithoutProfileNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutDailyCheckInsInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -747,15 +746,15 @@ export type ProfileCreateWithoutDailyCheckInsInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  email: string
+  dailyNotes?: Prisma.DailyNoteCreateNestedManyWithoutProfileInput
   habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
   habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
-  dailyNotes?: Prisma.DailyNoteCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutDailyCheckInsInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -763,9 +762,10 @@ export type ProfileUncheckedCreateWithoutDailyCheckInsInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  email: string
+  dailyNotes?: Prisma.DailyNoteUncheckedCreateNestedManyWithoutProfileInput
   habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
   habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
-  dailyNotes?: Prisma.DailyNoteUncheckedCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedCreateNestedManyWithoutProfileInput
 }
 
@@ -787,7 +787,6 @@ export type ProfileUpdateToOneWithWhereWithoutDailyCheckInsInput = {
 
 export type ProfileUpdateWithoutDailyCheckInsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -795,15 +794,15 @@ export type ProfileUpdateWithoutDailyCheckInsInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  dailyNotes?: Prisma.DailyNoteUpdateManyWithoutProfileNestedInput
   habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
   habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
-  dailyNotes?: Prisma.DailyNoteUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutDailyCheckInsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -811,15 +810,15 @@ export type ProfileUncheckedUpdateWithoutDailyCheckInsInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  dailyNotes?: Prisma.DailyNoteUncheckedUpdateManyWithoutProfileNestedInput
   habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
   habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
-  dailyNotes?: Prisma.DailyNoteUncheckedUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutDailyNotesInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -827,15 +826,15 @@ export type ProfileCreateWithoutDailyNotesInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  email: string
+  dailyCheckIns?: Prisma.DailyCheckInCreateNestedManyWithoutProfileInput
   habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
   habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
-  dailyCheckIns?: Prisma.DailyCheckInCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutDailyNotesInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -843,9 +842,10 @@ export type ProfileUncheckedCreateWithoutDailyNotesInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  email: string
+  dailyCheckIns?: Prisma.DailyCheckInUncheckedCreateNestedManyWithoutProfileInput
   habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
   habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
-  dailyCheckIns?: Prisma.DailyCheckInUncheckedCreateNestedManyWithoutProfileInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedCreateNestedManyWithoutProfileInput
 }
 
@@ -867,7 +867,6 @@ export type ProfileUpdateToOneWithWhereWithoutDailyNotesInput = {
 
 export type ProfileUpdateWithoutDailyNotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -875,15 +874,15 @@ export type ProfileUpdateWithoutDailyNotesInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  dailyCheckIns?: Prisma.DailyCheckInUpdateManyWithoutProfileNestedInput
   habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
   habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
-  dailyCheckIns?: Prisma.DailyCheckInUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutDailyNotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -891,15 +890,15 @@ export type ProfileUncheckedUpdateWithoutDailyNotesInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  dailyCheckIns?: Prisma.DailyCheckInUncheckedUpdateManyWithoutProfileNestedInput
   habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
   habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
-  dailyCheckIns?: Prisma.DailyCheckInUncheckedUpdateManyWithoutProfileNestedInput
   weeklyReviews?: Prisma.WeeklyReviewUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutWeeklyReviewsInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -907,15 +906,15 @@ export type ProfileCreateWithoutWeeklyReviewsInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
-  habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteCreateNestedManyWithoutProfileInput
+  habits?: Prisma.HabitCreateNestedManyWithoutProfileInput
+  habitEntries?: Prisma.HabitEntryCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutWeeklyReviewsInput = {
-  id?: string
-  userId: string
+  id: string
   displayName?: string | null
   timezone?: string
   onboardingDone?: boolean
@@ -923,10 +922,11 @@ export type ProfileUncheckedCreateWithoutWeeklyReviewsInput = {
   movementGoalMin?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
-  habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
+  email: string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedCreateNestedManyWithoutProfileInput
   dailyNotes?: Prisma.DailyNoteUncheckedCreateNestedManyWithoutProfileInput
+  habits?: Prisma.HabitUncheckedCreateNestedManyWithoutProfileInput
+  habitEntries?: Prisma.HabitEntryUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutWeeklyReviewsInput = {
@@ -947,7 +947,6 @@ export type ProfileUpdateToOneWithWhereWithoutWeeklyReviewsInput = {
 
 export type ProfileUpdateWithoutWeeklyReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -955,15 +954,15 @@ export type ProfileUpdateWithoutWeeklyReviewsInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
-  habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUpdateManyWithoutProfileNestedInput
+  habits?: Prisma.HabitUpdateManyWithoutProfileNestedInput
+  habitEntries?: Prisma.HabitEntryUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutWeeklyReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardingDone?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -971,10 +970,11 @@ export type ProfileUncheckedUpdateWithoutWeeklyReviewsInput = {
   movementGoalMin?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
-  habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   dailyCheckIns?: Prisma.DailyCheckInUncheckedUpdateManyWithoutProfileNestedInput
   dailyNotes?: Prisma.DailyNoteUncheckedUpdateManyWithoutProfileNestedInput
+  habits?: Prisma.HabitUncheckedUpdateManyWithoutProfileNestedInput
+  habitEntries?: Prisma.HabitEntryUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 
@@ -983,18 +983,18 @@ export type ProfileUncheckedUpdateWithoutWeeklyReviewsInput = {
  */
 
 export type ProfileCountOutputType = {
-  habits: number
-  habitEntries: number
   dailyCheckIns: number
   dailyNotes: number
+  habits: number
+  habitEntries: number
   weeklyReviews: number
 }
 
 export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  habits?: boolean | ProfileCountOutputTypeCountHabitsArgs
-  habitEntries?: boolean | ProfileCountOutputTypeCountHabitEntriesArgs
   dailyCheckIns?: boolean | ProfileCountOutputTypeCountDailyCheckInsArgs
   dailyNotes?: boolean | ProfileCountOutputTypeCountDailyNotesArgs
+  habits?: boolean | ProfileCountOutputTypeCountHabitsArgs
+  habitEntries?: boolean | ProfileCountOutputTypeCountHabitEntriesArgs
   weeklyReviews?: boolean | ProfileCountOutputTypeCountWeeklyReviewsArgs
 }
 
@@ -1006,20 +1006,6 @@ export type ProfileCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
    * Select specific fields to fetch from the ProfileCountOutputType
    */
   select?: Prisma.ProfileCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * ProfileCountOutputType without action
- */
-export type ProfileCountOutputTypeCountHabitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.HabitWhereInput
-}
-
-/**
- * ProfileCountOutputType without action
- */
-export type ProfileCountOutputTypeCountHabitEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.HabitEntryWhereInput
 }
 
 /**
@@ -1039,6 +1025,20 @@ export type ProfileCountOutputTypeCountDailyNotesArgs<ExtArgs extends runtime.Ty
 /**
  * ProfileCountOutputType without action
  */
+export type ProfileCountOutputTypeCountHabitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HabitWhereInput
+}
+
+/**
+ * ProfileCountOutputType without action
+ */
+export type ProfileCountOutputTypeCountHabitEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HabitEntryWhereInput
+}
+
+/**
+ * ProfileCountOutputType without action
+ */
 export type ProfileCountOutputTypeCountWeeklyReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.WeeklyReviewWhereInput
 }
@@ -1046,7 +1046,6 @@ export type ProfileCountOutputTypeCountWeeklyReviewsArgs<ExtArgs extends runtime
 
 export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
   displayName?: boolean
   timezone?: boolean
   onboardingDone?: boolean
@@ -1054,17 +1053,17 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   movementGoalMin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  habits?: boolean | Prisma.Profile$habitsArgs<ExtArgs>
-  habitEntries?: boolean | Prisma.Profile$habitEntriesArgs<ExtArgs>
+  email?: boolean
   dailyCheckIns?: boolean | Prisma.Profile$dailyCheckInsArgs<ExtArgs>
   dailyNotes?: boolean | Prisma.Profile$dailyNotesArgs<ExtArgs>
+  habits?: boolean | Prisma.Profile$habitsArgs<ExtArgs>
+  habitEntries?: boolean | Prisma.Profile$habitEntriesArgs<ExtArgs>
   weeklyReviews?: boolean | Prisma.Profile$weeklyReviewsArgs<ExtArgs>
   _count?: boolean | Prisma.ProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
   displayName?: boolean
   timezone?: boolean
   onboardingDone?: boolean
@@ -1072,11 +1071,11 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   movementGoalMin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  email?: boolean
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
   displayName?: boolean
   timezone?: boolean
   onboardingDone?: boolean
@@ -1084,11 +1083,11 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   movementGoalMin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  email?: boolean
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectScalar = {
   id?: boolean
-  userId?: boolean
   displayName?: boolean
   timezone?: boolean
   onboardingDone?: boolean
@@ -1096,14 +1095,15 @@ export type ProfileSelectScalar = {
   movementGoalMin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  email?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "displayName" | "timezone" | "onboardingDone" | "waterGoalMl" | "movementGoalMin" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "displayName" | "timezone" | "onboardingDone" | "waterGoalMl" | "movementGoalMin" | "createdAt" | "updatedAt" | "email", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  habits?: boolean | Prisma.Profile$habitsArgs<ExtArgs>
-  habitEntries?: boolean | Prisma.Profile$habitEntriesArgs<ExtArgs>
   dailyCheckIns?: boolean | Prisma.Profile$dailyCheckInsArgs<ExtArgs>
   dailyNotes?: boolean | Prisma.Profile$dailyNotesArgs<ExtArgs>
+  habits?: boolean | Prisma.Profile$habitsArgs<ExtArgs>
+  habitEntries?: boolean | Prisma.Profile$habitEntriesArgs<ExtArgs>
   weeklyReviews?: boolean | Prisma.Profile$weeklyReviewsArgs<ExtArgs>
   _count?: boolean | Prisma.ProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1113,15 +1113,14 @@ export type ProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Profile"
   objects: {
-    habits: Prisma.$HabitPayload<ExtArgs>[]
-    habitEntries: Prisma.$HabitEntryPayload<ExtArgs>[]
     dailyCheckIns: Prisma.$DailyCheckInPayload<ExtArgs>[]
     dailyNotes: Prisma.$DailyNotePayload<ExtArgs>[]
+    habits: Prisma.$HabitPayload<ExtArgs>[]
+    habitEntries: Prisma.$HabitEntryPayload<ExtArgs>[]
     weeklyReviews: Prisma.$WeeklyReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    userId: string
     displayName: string | null
     timezone: string
     onboardingDone: boolean
@@ -1129,6 +1128,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     movementGoalMin: number
     createdAt: Date
     updatedAt: Date
+    email: string
   }, ExtArgs["result"]["profile"]>
   composites: {}
 }
@@ -1523,10 +1523,10 @@ readonly fields: ProfileFieldRefs;
  */
 export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  habits<T extends Prisma.Profile$habitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$habitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HabitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  habitEntries<T extends Prisma.Profile$habitEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$habitEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HabitEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dailyCheckIns<T extends Prisma.Profile$dailyCheckInsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$dailyCheckInsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyCheckInPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dailyNotes<T extends Prisma.Profile$dailyNotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$dailyNotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  habits<T extends Prisma.Profile$habitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$habitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HabitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  habitEntries<T extends Prisma.Profile$habitEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$habitEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HabitEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   weeklyReviews<T extends Prisma.Profile$weeklyReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$weeklyReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WeeklyReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1558,7 +1558,6 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface ProfileFieldRefs {
   readonly id: Prisma.FieldRef<"Profile", 'String'>
-  readonly userId: Prisma.FieldRef<"Profile", 'String'>
   readonly displayName: Prisma.FieldRef<"Profile", 'String'>
   readonly timezone: Prisma.FieldRef<"Profile", 'String'>
   readonly onboardingDone: Prisma.FieldRef<"Profile", 'Boolean'>
@@ -1566,6 +1565,7 @@ export interface ProfileFieldRefs {
   readonly movementGoalMin: Prisma.FieldRef<"Profile", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Profile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Profile", 'DateTime'>
+  readonly email: Prisma.FieldRef<"Profile", 'String'>
 }
     
 
@@ -1959,54 +1959,6 @@ export type ProfileDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * Profile.habits
- */
-export type Profile$habitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Habit
-   */
-  select?: Prisma.HabitSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Habit
-   */
-  omit?: Prisma.HabitOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.HabitInclude<ExtArgs> | null
-  where?: Prisma.HabitWhereInput
-  orderBy?: Prisma.HabitOrderByWithRelationInput | Prisma.HabitOrderByWithRelationInput[]
-  cursor?: Prisma.HabitWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.HabitScalarFieldEnum | Prisma.HabitScalarFieldEnum[]
-}
-
-/**
- * Profile.habitEntries
- */
-export type Profile$habitEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the HabitEntry
-   */
-  select?: Prisma.HabitEntrySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the HabitEntry
-   */
-  omit?: Prisma.HabitEntryOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.HabitEntryInclude<ExtArgs> | null
-  where?: Prisma.HabitEntryWhereInput
-  orderBy?: Prisma.HabitEntryOrderByWithRelationInput | Prisma.HabitEntryOrderByWithRelationInput[]
-  cursor?: Prisma.HabitEntryWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.HabitEntryScalarFieldEnum | Prisma.HabitEntryScalarFieldEnum[]
-}
-
-/**
  * Profile.dailyCheckIns
  */
 export type Profile$dailyCheckInsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2052,6 +2004,54 @@ export type Profile$dailyNotesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.DailyNoteScalarFieldEnum | Prisma.DailyNoteScalarFieldEnum[]
+}
+
+/**
+ * Profile.habits
+ */
+export type Profile$habitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Habit
+   */
+  select?: Prisma.HabitSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Habit
+   */
+  omit?: Prisma.HabitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  where?: Prisma.HabitWhereInput
+  orderBy?: Prisma.HabitOrderByWithRelationInput | Prisma.HabitOrderByWithRelationInput[]
+  cursor?: Prisma.HabitWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HabitScalarFieldEnum | Prisma.HabitScalarFieldEnum[]
+}
+
+/**
+ * Profile.habitEntries
+ */
+export type Profile$habitEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HabitEntry
+   */
+  select?: Prisma.HabitEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HabitEntry
+   */
+  omit?: Prisma.HabitEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitEntryInclude<ExtArgs> | null
+  where?: Prisma.HabitEntryWhereInput
+  orderBy?: Prisma.HabitEntryOrderByWithRelationInput | Prisma.HabitEntryOrderByWithRelationInput[]
+  cursor?: Prisma.HabitEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HabitEntryScalarFieldEnum | Prisma.HabitEntryScalarFieldEnum[]
 }
 
 /**
