@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
@@ -72,6 +73,15 @@ export default async function DashboardPage() {
             {profile.timezone}
           </span>
         </div>
+
+        <div className="mt-6">
+          <Link
+            href="/check-in"
+            className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+          >
+            New daily check-in
+          </Link>
+        </div>
       </section>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -130,8 +140,18 @@ export default async function DashboardPage() {
         <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">Today</h2>
           <p className="mt-3 text-sm leading-6 text-gray-600">
-            Your setup is complete and your preferences are saved.
+            You’ve finished your setup. Your daily check-in will appear here
+            once it’s available.
           </p>
+
+          <div className="mt-5 rounded-2xl bg-gray-50 p-4">
+            <p className="text-sm font-medium text-gray-900">
+              Your space is ready
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              Your goals, focus areas, and daily targets have been saved.
+            </p>
+          </div>
         </article>
       </section>
     </main>
