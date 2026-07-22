@@ -75,12 +75,13 @@ export default function LoginPage() {
         </button>
       </form>
 
-      {message ? (
-        <p className="mt-4 text-sm text-red-600">{message}</p>
-      ) : null}
+      {message ? <p className="mt-4 text-sm text-red-600">{message}</p> : null}
 
       <p className="mt-6 text-sm text-gray-600">
-        Don’t have an account? <a href="/signup" className="underline">Sign up</a>
+        Don’t have an account?{" "}
+        <a href="/signup" className="underline">
+          Sign up
+        </a>
       </p>
     </main>
   );

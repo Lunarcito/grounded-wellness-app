@@ -31,7 +31,7 @@ export default function SignupPage() {
     }
 
     setMessage(
-      "Account created. If email confirmation is enabled, check your inbox."
+      "Account created. If email confirmation is enabled, check your inbox.",
     );
     setLoading(false);
   }
@@ -82,12 +82,13 @@ export default function SignupPage() {
         </button>
       </form>
 
-      {message ? (
-        <p className="mt-4 text-sm text-gray-700">{message}</p>
-      ) : null}
+      {message ? <p className="mt-4 text-sm text-gray-700">{message}</p> : null}
 
       <p className="mt-6 text-sm text-gray-600">
-        Already have an account? <a href="/login" className="underline">Log in</a>
+        Already have an account?{" "}
+        <a href="/login" className="underline">
+          Log in
+        </a>
       </p>
     </main>
   );
