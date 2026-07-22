@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { completeSetup } from "./actions";
 
 export default async function SetupPage() {
   const supabase = await createClient();
@@ -45,7 +46,10 @@ export default async function SetupPage() {
         </p>
       </div>
 
-      <form className="space-y-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <form
+        action={completeSetup}
+        className="space-y-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+      >
         <section className="space-y-4">
           <div>
             <label
