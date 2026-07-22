@@ -2,6 +2,30 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 
+function formatFocusAreas(value: string | null) {
+  if (!value) return [];
+
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) =>
+      item
+        .split("_")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+    );
+}
+
+function formatGoal(value: string | null) {
+  if (!value) return "Not set yet";
+
+  return value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
 
@@ -13,44 +37,102 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const profile = await prisma.profile.upsert({
+  const profile = await prisma.profile.findUnique({
     where: { id: user.id },
-    update: {
-      email: user.email,
-    },
-    create: {
-      id: user.id,
-      email: user.email,
-      displayName: user.user_metadata?.display_name ?? null,
-      timezone: "UTC",
-      onboardingDone: false,
-      waterGoalMl: 2000,
-      movementGoalMin: 30,
-    },
   });
+
+  if (!profile) {
+    redirect("/setup");
+  }
 
   if (!profile.onboardingDone) {
     redirect("/setup");
   }
 
+  const focusAreas = formatFocusAreas(profile.focusAreas);
+  const firstName =
+    profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
+
   return (
-    <main className="mx-auto min-h-screen max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-semibold">Dashboard</h1>
+    <main className="mx-auto min-h-screen max-w-5xl px-6 py-12">
+      <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
+        <p className="text-sm font-medium text-gray-500">Wellness dashboard</p>
+        <h1 className="mt-2 text-3xl font-semibold text-gray-900">
+          Welcome back, {firstName}
+        </h1>
+        <p className="mt-3 max-w-2xl text-base text-gray-600">
+          Your setup is complete and your personal wellness space is ready.
+        </p>
 
-      <p className="mt-2 text-gray-600">Signed in as {profile.email}</p>
-
-      <section className="mt-8 rounded-xl border p-6">
-        <h2 className="text-xl font-medium">Dashboard</h2>
-        <p className="mt-2 text-gray-600"></p>
-
-        <div className="mt-4 space-y-2 text-sm text-gray-700">
-          <p>
-            <strong>Email:</strong> {profile.email}
-          </p>
-          <p>
-            <strong>Timezone:</strong> {profile.timezone}
-          </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+            Setup completed
+          </span>
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
+            {profile.timezone}
+          </span>
         </div>
+      </section>
+
+      <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Water goal</p>
+          <p className="mt-2 text-2xl font-semibold text-gray-900">
+            {profile.waterGoalMl} ml
+          </p>
+        </article>
+
+        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Movement goal</p>
+          <p className="mt-2 text-2xl font-semibold text-gray-900">
+            {profile.movementGoalMin} min
+          </p>
+        </article>
+
+        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Main goal</p>
+          <p className="mt-2 text-lg font-semibold text-gray-900">
+            {formatGoal(profile.wellnessGoal)}
+          </p>
+        </article>
+
+        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <p className="text-sm text-gray-500">Profile</p>
+          <p className="mt-2 text-lg font-semibold text-gray-900">
+            {profile.displayName || "No display name"}
+          </p>
+          <p className="mt-1 text-sm text-gray-500">{profile.email}</p>
+        </article>
+      </section>
+
+      <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
+        <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">Focus areas</h2>
+
+          {focusAreas.length > 0 ? (
+            <div className="mt-4 flex flex-wrap gap-3">
+              {focusAreas.map((area) => (
+                <span
+                  key={area}
+                  className="rounded-full bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700"
+                >
+                  {area}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-gray-600">
+              No focus areas selected yet.
+            </p>
+          )}
+        </article>
+
+        <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">Today</h2>
+          <p className="mt-3 text-sm leading-6 text-gray-600">
+            Your setup is complete and your preferences are saved.
+          </p>
+        </article>
       </section>
     </main>
   );
