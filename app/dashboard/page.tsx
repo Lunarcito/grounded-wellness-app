@@ -27,6 +27,20 @@ function formatGoal(value: string | null) {
     .join(" ");
 }
 
+function formatCheckInLabel(value: number | null | undefined) {
+  if (value == null) return "Not logged";
+
+  const labels: Record<number, string> = {
+    1: "Very low",
+    2: "Low",
+    3: "Okay",
+    4: "Good",
+    5: "Great",
+  };
+
+  return labels[value] ?? String(value);
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
 
@@ -49,6 +63,11 @@ export default async function DashboardPage() {
   if (!profile.onboardingDone) {
     redirect("/setup");
   }
+
+  const latestCheckIn = await prisma.dailyCheckIn.findFirst({
+    where: { profileId: user.id },
+    orderBy: { date: "desc" },
+  });
 
   const focusAreas = formatFocusAreas(profile.focusAreas);
   const firstName =
@@ -139,19 +158,80 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">Today</h2>
-          <p className="mt-3 text-sm leading-6 text-gray-600">
-            You’ve finished your setup. Your daily check-in will appear here
-            once it’s available.
-          </p>
 
-          <div className="mt-5 rounded-2xl bg-gray-50 p-4">
-            <p className="text-sm font-medium text-gray-900">
-              Your space is ready
-            </p>
-            <p className="mt-2 text-sm text-gray-600">
-              Your goals, focus areas, and daily targets have been saved.
-            </p>
-          </div>
+          {latestCheckIn ? (
+            <div className="mt-4 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Mood
+                  </p>
+                  <p className="mt-2 text-base font-semibold text-gray-900">
+                    {formatCheckInLabel(latestCheckIn.moodScore)}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Energy
+                  </p>
+                  <p className="mt-2 text-base font-semibold text-gray-900">
+                    {formatCheckInLabel(latestCheckIn.energyScore)}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Sleep
+                  </p>
+                  <p className="mt-2 text-base font-semibold text-gray-900">
+                    {formatCheckInLabel(latestCheckIn.sleepQualityScore)}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Stress
+                  </p>
+                  <p className="mt-2 text-base font-semibold text-gray-900">
+                    {latestCheckIn.stressScore != null
+                      ? formatCheckInLabel(latestCheckIn.stressScore)
+                      : "Not logged"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-gray-50 p-4">
+                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                  <span>
+                    Water:{" "}
+                    <span className="font-medium text-gray-900">
+                      {latestCheckIn.waterMl ?? 0} ml
+                    </span>
+                  </span>
+                  <span>
+                    Movement:{" "}
+                    <span className="font-medium text-gray-900">
+                      {latestCheckIn.movementMin ?? 0} min
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="mt-3 text-sm leading-6 text-gray-600">
+                You haven’t logged a check-in yet.
+              </p>
+
+              <div className="mt-5 rounded-2xl bg-gray-50 p-4">
+                <p className="text-sm font-medium text-gray-900">Start today</p>
+                <p className="mt-2 text-sm text-gray-600">
+                  Add your first daily check-in to begin tracking how you feel.
+                </p>
+              </div>
+            </>
+          )}
         </article>
       </section>
     </main>
