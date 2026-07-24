@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { saveDailyCheckIn } from "./actions";
+import { SubmitButton } from "./submit-button";
 
 function getTodayDateUtc() {
   const now = new Date();
@@ -217,12 +218,7 @@ export default async function CheckInPage() {
               : "Your first check-in helps shape your dashboard over time."}
           </p>
 
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
-          >
-            {existingCheckIn ? "Update check-in" : "Save check-in"}
-          </button>
+          <SubmitButton />
         </div>
       </form>
     </main>

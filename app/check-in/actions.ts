@@ -5,11 +5,70 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 
-function toInt(value: FormDataEntryValue | null): number | null {
-  if (typeof value !== "string") return null;
+function toOptionalNumber(value: FormDataEntryValue | null): number | null {
+  if (typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
 
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : null;
+
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function getRequiredScore(
+  value: FormDataEntryValue | null,
+  fieldName: string,
+): number {
+  const parsed = toOptionalNumber(value);
+
+  if (
+    parsed === null ||
+    !Number.isInteger(parsed) ||
+    parsed < 1 ||
+    parsed > 5
+  ) {
+    throw new Error(`Invalid ${fieldName}.`);
+  }
+
+  return parsed;
+}
+
+function getOptionalScore(
+  value: FormDataEntryValue | null,
+  fieldName: string,
+): number | null {
+  const parsed = toOptionalNumber(value);
+
+  if (parsed === null) {
+    return null;
+  }
+
+  if (!Number.isInteger(parsed) || parsed < 1 || parsed > 5) {
+    throw new Error(`Invalid ${fieldName}.`);
+  }
+
+  return parsed;
+}
+
+function getOptionalNonNegativeNumber(
+  value: FormDataEntryValue | null,
+  fieldName: string,
+): number | null {
+  const parsed = toOptionalNumber(value);
+
+  if (parsed === null) {
+    return null;
+  }
+
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    throw new Error(`Invalid ${fieldName}.`);
+  }
+
+  return parsed;
 }
 
 function getTodayDateUtc() {
@@ -39,16 +98,27 @@ export async function saveDailyCheckIn(formData: FormData) {
     redirect("/setup");
   }
 
-  const moodScore = toInt(formData.get("moodScore"));
-  const energyScore = toInt(formData.get("energyScore"));
-  const sleepQualityScore = toInt(formData.get("sleepQualityScore"));
-  const stressScore = toInt(formData.get("stressScore"));
-  const waterMl = toInt(formData.get("waterMl"));
-  const movementMin = toInt(formData.get("movementMin"));
-
-  if (!moodScore || !energyScore || !sleepQualityScore) {
-    throw new Error("Missing required daily check-in values.");
-  }
+  const moodScore = getRequiredScore(formData.get("moodScore"), "mood score");
+  const energyScore = getRequiredScore(
+    formData.get("energyScore"),
+    "energy score",
+  );
+  const sleepQualityScore = getRequiredScore(
+    formData.get("sleepQualityScore"),
+    "sleep quality score",
+  );
+  const stressScore = getOptionalScore(
+    formData.get("stressScore"),
+    "stress score",
+  );
+  const waterMl = getOptionalNonNegativeNumber(
+    formData.get("waterMl"),
+    "water amount",
+  );
+  const movementMin = getOptionalNonNegativeNumber(
+    formData.get("movementMin"),
+    "movement minutes",
+  );
 
   const today = getTodayDateUtc();
 
