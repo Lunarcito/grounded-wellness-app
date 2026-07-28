@@ -1,3 +1,4 @@
+import { formatCheckInLabel } from "./formatters";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -25,20 +26,6 @@ function formatGoal(value: string | null) {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-}
-
-function formatCheckInLabel(value: number | null | undefined) {
-  if (value == null) return "Not logged";
-
-  const labels: Record<number, string> = {
-    1: "Very low",
-    2: "Low",
-    3: "Okay",
-    4: "Good",
-    5: "Great",
-  };
-
-  return labels[value] ?? String(value);
 }
 
 export default async function DashboardPage() {
