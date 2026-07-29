@@ -1,8 +1,53 @@
-import { createHabit } from "./actions";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { completeHabitForToday, createHabit } from "./actions";
+
+function getTodayDateUtc() {
+  const now = new Date();
+
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+  );
+}
 
 export default async function HabitsPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user || !user.email) {
+    redirect("/login");
+  }
+
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+  });
+
+  if (!profile || !profile.onboardingDone) {
+    redirect("/setup");
+  }
+
+  const today = getTodayDateUtc();
+
   const habits = await prisma.habit.findMany({
+    where: {
+      profileId: user.id,
+      archivedAt: null,
+      isActive: true,
+    },
+    include: {
+      entries: {
+        where: {
+          date: today,
+        },
+        select: {
+          id: true,
+        },
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -43,14 +88,39 @@ export default async function HabitsPage() {
           </div>
         ) : (
           <ul className="space-y-3">
-            {habits.map((habit) => (
-              <li
-                key={habit.id}
-                className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm"
-              >
-                <p className="font-medium text-neutral-900">{habit.name}</p>
-              </li>
-            ))}
+            {habits.map((habit) => {
+              const completedToday = habit.entries.length > 0;
+
+              return (
+                <li
+                  key={habit.id}
+                  className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="space-y-1">
+                    <p className="font-medium text-neutral-900">{habit.name}</p>
+                    <p className="text-sm text-neutral-500">
+                      {completedToday ? "Completed today" : "Not completed yet"}
+                    </p>
+                  </div>
+
+                  {completedToday ? (
+                    <span className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700">
+                      Done
+                    </span>
+                  ) : (
+                    <form action={completeHabitForToday}>
+                      <input type="hidden" name="habitId" value={habit.id} />
+                      <button
+                        type="submit"
+                        className="min-h-11 rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+                      >
+                        Done today
+                      </button>
+                    </form>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
