@@ -55,6 +55,13 @@ export default async function HabitsPage() {
     },
   });
 
+  const totalHabits = habits.length;
+  const completedTodayCount = habits.filter(
+    (habit) => habit.entries.length > 0,
+  ).length;
+  const completionPercentage =
+    totalHabits > 0 ? Math.round((completedTodayCount / totalHabits) * 100) : 0;
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 px-6 py-10">
       <section className="space-y-2">
@@ -62,6 +69,29 @@ export default async function HabitsPage() {
         <p className="text-sm text-neutral-600">
           Create small habits you want to track consistently.
         </p>
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-neutral-500">Active habits</p>
+          <p className="mt-1 text-2xl font-semibold text-neutral-900">
+            {totalHabits}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-neutral-500">Completed today</p>
+          <p className="mt-1 text-2xl font-semibold text-neutral-900">
+            {completedTodayCount}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-neutral-500">Today</p>
+          <p className="mt-1 text-2xl font-semibold text-neutral-900">
+            {completionPercentage}%
+          </p>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
