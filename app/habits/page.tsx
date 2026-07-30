@@ -42,6 +42,7 @@ export default async function HabitsPage() {
       entries: {
         where: {
           date: today,
+          completed: true,
         },
         select: {
           id: true,

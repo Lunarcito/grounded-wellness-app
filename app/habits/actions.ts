@@ -39,6 +39,7 @@ export async function createHabit(formData: FormData) {
   const profileId = await getCurrentUserProfileId();
 
   const nameValue = formData.get("name");
+
   const name =
     typeof nameValue === "string" && nameValue.trim().length > 0
       ? nameValue.trim()
@@ -69,6 +70,7 @@ export async function completeHabitForToday(formData: FormData) {
   }
 
   const habitId = habitIdValue.trim();
+  const today = getTodayDateUtc();
 
   const habit = await prisma.habit.findFirst({
     where: {
@@ -86,8 +88,6 @@ export async function completeHabitForToday(formData: FormData) {
     throw new Error("Habit not found.");
   }
 
-  const today = getTodayDateUtc();
-
   await prisma.habitEntry.upsert({
     where: {
       habitId_date: {
@@ -95,11 +95,14 @@ export async function completeHabitForToday(formData: FormData) {
         date: today,
       },
     },
-    update: {},
+    update: {
+      completed: true,
+    },
     create: {
-      habitId,
       profileId,
+      habitId,
       date: today,
+      completed: true,
     },
   });
 
