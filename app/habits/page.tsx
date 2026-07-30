@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { completeHabitForToday, createHabit } from "./actions";
+import { SubmitButton } from "./submit-button";
 
 function getTodayDateUtc() {
   const now = new Date();
@@ -111,12 +112,7 @@ export default async function HabitsPage() {
                   ) : (
                     <form action={completeHabitForToday}>
                       <input type="hidden" name="habitId" value={habit.id} />
-                      <button
-                        type="submit"
-                        className="min-h-11 rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
-                      >
-                        Done today
-                      </button>
+                      <SubmitButton />
                     </form>
                   )}
                 </li>
