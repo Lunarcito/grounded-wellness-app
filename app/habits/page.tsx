@@ -12,6 +12,38 @@ function getTodayDateUtc() {
   );
 }
 
+function getDateDaysAgoUtc(daysAgo: number) {
+  const now = new Date();
+
+  return new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() - daysAgo,
+    ),
+  );
+}
+
+function calculateStreakForHabit(entryDates: Date[]) {
+  const dates = new Set(
+    entryDates.map((date) => date.toISOString().slice(0, 10)),
+  );
+
+  let streak = 0;
+
+  for (let i = 0; i < 30; i += 1) {
+    const dateKey = getDateDaysAgoUtc(i).toISOString().slice(0, 10);
+
+    if (!dates.has(dateKey)) {
+      break;
+    }
+
+    streak += 1;
+  }
+
+  return streak;
+}
+
 export default async function HabitsPage() {
   const supabase = await createClient();
 
@@ -32,6 +64,7 @@ export default async function HabitsPage() {
   }
 
   const today = getTodayDateUtc();
+  const thirtyDaysAgo = getDateDaysAgoUtc(29);
 
   const habits = await prisma.habit.findMany({
     where: {
@@ -42,11 +75,17 @@ export default async function HabitsPage() {
     include: {
       entries: {
         where: {
-          date: today,
           completed: true,
+          date: {
+            gte: thirtyDaysAgo,
+            lte: today,
+          },
         },
         select: {
-          id: true,
+          date: true,
+        },
+        orderBy: {
+          date: "desc",
         },
       },
     },
@@ -57,7 +96,10 @@ export default async function HabitsPage() {
 
   const totalHabits = habits.length;
   const completedTodayCount = habits.filter(
-    (habit) => habit.entries.length > 0,
+    (habit) => habit.entries.some((entry) => {
+      const key = entry.date.toISOString().slice(0, 10);
+      return key === today.toISOString().slice(0, 10);
+    }),
   ).length;
   const completionPercentage =
     totalHabits > 0 ? Math.round((completedTodayCount / totalHabits) * 100) : 0;
@@ -121,7 +163,14 @@ export default async function HabitsPage() {
         ) : (
           <ul className="space-y-3">
             {habits.map((habit) => {
-              const completedToday = habit.entries.length > 0;
+              const completedToday = habit.entries.some((entry) => {
+                const key = entry.date.toISOString().slice(0, 10);
+                return key === today.toISOString().slice(0, 10);
+              });
+
+              const streak = calculateStreakForHabit(
+                habit.entries.map((entry) => entry.date),
+              );
 
               return (
                 <li
@@ -130,6 +179,9 @@ export default async function HabitsPage() {
                 >
                   <div className="space-y-1">
                     <p className="font-medium text-neutral-900">{habit.name}</p>
+                    <p className="text-sm text-neutral-500">
+                      {streak > 0 ? `${streak}-day streak` : "No streak yet"}
+                    </p>
                     <p className="text-sm text-neutral-500">
                       {completedToday ? "Completed today" : "Not completed yet"}
                     </p>
