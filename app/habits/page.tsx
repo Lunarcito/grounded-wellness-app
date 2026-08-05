@@ -3,46 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { completeHabitForToday, createHabit } from "./actions";
 import { SubmitButton } from "./submit-button";
-
-function getTodayDateUtc() {
-  const now = new Date();
-
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
-}
-
-function getDateDaysAgoUtc(daysAgo: number) {
-  const now = new Date();
-
-  return new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - daysAgo,
-    ),
-  );
-}
-
-function calculateStreakForHabit(entryDates: Date[]) {
-  const dates = new Set(
-    entryDates.map((date) => date.toISOString().slice(0, 10)),
-  );
-
-  let streak = 0;
-
-  for (let i = 0; i < 30; i += 1) {
-    const dateKey = getDateDaysAgoUtc(i).toISOString().slice(0, 10);
-
-    if (!dates.has(dateKey)) {
-      break;
-    }
-
-    streak += 1;
-  }
-
-  return streak;
-}
+import {
+  calculateStreakForHabit,
+  getDateDaysAgoUtc,
+  getTodayDateUtc,
+} from "./utils";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -95,8 +60,8 @@ export default async function HabitsPage() {
   });
 
   const totalHabits = habits.length;
-  const completedTodayCount = habits.filter(
-    (habit) => habit.entries.some((entry) => {
+  const completedTodayCount = habits.filter((habit) =>
+    habit.entries.some((entry) => {
       const key = entry.date.toISOString().slice(0, 10);
       return key === today.toISOString().slice(0, 10);
     }),
