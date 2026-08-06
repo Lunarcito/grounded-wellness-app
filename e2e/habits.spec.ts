@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
 
-test("redirects unauthenticated users to login", async ({ page }) => {
-  await page.context().clearCookies();
+test("authenticated user can open habits page", async ({ page }) => {
   await page.goto("/habits");
-  await expect(page).toHaveURL(/\/login/);
+
+  await expect(page).toHaveURL(/\/habits/);
+  await expect(
+    page.getByRole("heading", { name: "Habits", exact: true })
+  ).toBeVisible();
 });
