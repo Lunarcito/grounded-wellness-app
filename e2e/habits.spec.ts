@@ -34,3 +34,24 @@ test("authenticated user can create a habit", async ({ page }) => {
 
   await expect(page.getByText(habitName, { exact: true })).toBeVisible();
 });
+
+test("authenticated user can complete a habit for today", async ({
+  page,
+}) => {
+  await page.goto("/habits");
+
+  const habitName = `Playwright completion test ${Date.now()}`;
+
+  await page.getByPlaceholder("e.g. Morning walk").fill(habitName);
+  await page.getByRole("button", { name: "Add habit" }).click();
+
+  const habitItem = page.locator("li").filter({ hasText: habitName });
+
+  await expect(habitItem).toBeVisible();
+  await habitItem.getByRole("button", { name: "Done today" }).click();
+
+  await expect(habitItem).toContainText("Completed today");
+  await expect(
+    habitItem.getByText("Done", { exact: true })
+  ).toBeVisible();
+});
