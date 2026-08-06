@@ -8,3 +8,18 @@ test("authenticated user can open habits page", async ({ page }) => {
     page.getByRole("heading", { name: "Habits", exact: true })
   ).toBeVisible();
 });
+
+test.describe("unauthenticated access", () => {
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [],
+    },
+  });
+
+  test("redirects unauthenticated users to login", async ({ page }) => {
+    await page.goto("/habits");
+
+    await expect(page).toHaveURL(/\/login/);
+  });
+});
