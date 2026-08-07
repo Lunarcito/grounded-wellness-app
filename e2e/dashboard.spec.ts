@@ -45,3 +45,15 @@ test("authenticated user can open the dashboard", async ({ page }) => {
     page.getByRole("heading", { name: "Today", exact: true })
   ).toBeVisible();
 });
+
+test("authenticated user can open a new daily check-in", async ({
+  page,
+}) => {
+  await page.goto("/dashboard");
+
+  await page
+    .getByRole("link", { name: "New daily check-in" })
+    .click();
+
+  await expect(page).toHaveURL(/\/check-in/);
+});
