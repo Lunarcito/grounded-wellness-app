@@ -5,7 +5,7 @@ test("authenticated user can submit a daily check-in", async ({ page }) => {
 
   await expect(page).toHaveURL(/\/check-in/);
   await expect(
-    page.getByRole("heading", { name: "How are you feeling today?" })
+    page.getByRole("heading", { name: "How are you feeling today?" }),
   ).toBeVisible();
 
   await page.getByLabel("Mood").selectOption("4");
@@ -23,4 +23,19 @@ test("authenticated user can submit a daily check-in", async ({ page }) => {
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByText("Water:", { exact: false })).toBeVisible();
   await expect(page.getByText("Movement:", { exact: false })).toBeVisible();
+});
+
+test.describe("unauthenticated access", () => {
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [],
+    },
+  });
+
+  test("redirects unauthenticated users to login", async ({ page }) => {
+    await page.goto("/check-in");
+
+    await expect(page).toHaveURL(/\/login/);
+  });
 });
