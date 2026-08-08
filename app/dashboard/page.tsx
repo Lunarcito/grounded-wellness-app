@@ -56,6 +56,94 @@ export default async function DashboardPage() {
     orderBy: { date: "desc" },
   });
 
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const [weeklyCheckIns, weeklyHabitEntries] = await Promise.all([
+    prisma.dailyCheckIn.findMany({
+      where: {
+        profileId: user.id,
+        date: {
+          gte: sevenDaysAgo,
+        },
+      },
+      orderBy: { date: "asc" },
+    }),
+
+    prisma.habitEntry.findMany({
+      where: {
+        profileId: user.id,
+        date: {
+          gte: sevenDaysAgo,
+        },
+      },
+      select: {
+        completed: true,
+      },
+    }),
+  ]);
+
+  const completedHabits = weeklyHabitEntries.filter(
+    (entry) => entry.completed,
+  ).length;
+
+  const trackedHabits = weeklyHabitEntries.length;
+
+  const completionRate =
+    trackedHabits > 0 ? Math.round((completedHabits / trackedHabits) * 100) : 0;
+
+  const averageMood =
+    weeklyCheckIns.length > 0
+      ? Math.round(
+          (weeklyCheckIns.reduce(
+            (total, checkIn) => total + checkIn.moodScore,
+            0,
+          ) /
+            weeklyCheckIns.length) *
+            10,
+        ) / 10
+      : null;
+
+  <section className="mt-8">
+    <div className="mb-4">
+      <h2 className="text-xl font-semibold text-gray-900">Last 7 days</h2>
+      <p className="mt-1 text-sm text-gray-600">
+        A quick overview of your recent wellness activity.
+      </p>
+    </div>
+
+    <div className="grid gap-4 sm:grid-cols-3">
+      <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p className="text-sm text-gray-500">Check-ins logged</p>
+        <p className="mt-2 text-2xl font-semibold text-gray-900">
+          {weeklyCheckIns.length}
+        </p>
+      </article>
+
+      <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p className="text-sm text-gray-500">Habit completion</p>
+        <p className="mt-2 text-2xl font-semibold text-gray-900">
+          {trackedHabits > 0 ? `${completionRate}%` : "No data"}
+        </p>
+        {trackedHabits > 0 && (
+          <p className="mt-1 text-sm text-gray-500">
+            {completedHabits} of {trackedHabits} tracked entries
+          </p>
+        )}
+      </article>
+
+      <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p className="text-sm text-gray-500">Average mood</p>
+        <p className="mt-2 text-2xl font-semibold text-gray-900">
+          {averageMood ?? "No data"}
+        </p>
+        {averageMood != null && (
+          <p className="mt-1 text-sm text-gray-500">out of 5</p>
+        )}
+      </article>
+    </div>
+  </section>;
+
   const focusAreas = formatFocusAreas(profile.focusAreas);
   const firstName =
     profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
