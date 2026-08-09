@@ -45,3 +45,21 @@ test("authenticated user can open a new daily check-in", async ({ page }) => {
 
   await expect(page).toHaveURL(/\/check-in/);
 });
+
+test("authenticated user can see weekly wellness summary", async ({ page }) => {
+  await page.goto("/dashboard");
+
+  await expect(
+    page.getByRole("heading", { name: "Last 7 days", exact: true }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByText("Check-ins logged", { exact: true }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByText("Habit completion", { exact: true }),
+  ).toBeVisible();
+
+  await expect(page.getByText("Average mood", { exact: true })).toBeVisible();
+});

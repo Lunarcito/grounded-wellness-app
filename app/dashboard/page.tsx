@@ -104,47 +104,8 @@ export default async function DashboardPage() {
         ) / 10
       : null;
 
-  <section className="mt-8">
-    <div className="mb-4">
-      <h2 className="text-xl font-semibold text-gray-900">Last 7 days</h2>
-      <p className="mt-1 text-sm text-gray-600">
-        A quick overview of your recent wellness activity.
-      </p>
-    </div>
-
-    <div className="grid gap-4 sm:grid-cols-3">
-      <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-gray-500">Check-ins logged</p>
-        <p className="mt-2 text-2xl font-semibold text-gray-900">
-          {weeklyCheckIns.length}
-        </p>
-      </article>
-
-      <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-gray-500">Habit completion</p>
-        <p className="mt-2 text-2xl font-semibold text-gray-900">
-          {trackedHabits > 0 ? `${completionRate}%` : "No data"}
-        </p>
-        {trackedHabits > 0 && (
-          <p className="mt-1 text-sm text-gray-500">
-            {completedHabits} of {trackedHabits} tracked entries
-          </p>
-        )}
-      </article>
-
-      <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-gray-500">Average mood</p>
-        <p className="mt-2 text-2xl font-semibold text-gray-900">
-          {averageMood ?? "No data"}
-        </p>
-        {averageMood != null && (
-          <p className="mt-1 text-sm text-gray-500">out of 5</p>
-        )}
-      </article>
-    </div>
-  </section>;
-
   const focusAreas = formatFocusAreas(profile.focusAreas);
+
   const firstName =
     profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
 
@@ -152,9 +113,11 @@ export default async function DashboardPage() {
     <main className="mx-auto min-h-screen max-w-5xl px-6 py-12">
       <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
         <p className="text-sm font-medium text-gray-500">Wellness dashboard</p>
+
         <h1 className="mt-2 text-3xl font-semibold text-gray-900">
           Welcome back, {firstName}
         </h1>
+
         <p className="mt-3 max-w-2xl text-base text-gray-600">
           Your setup is complete and your personal wellness space is ready.
         </p>
@@ -163,6 +126,7 @@ export default async function DashboardPage() {
           <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
             Setup completed
           </span>
+
           <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
             {profile.timezone}
           </span>
@@ -181,6 +145,7 @@ export default async function DashboardPage() {
       <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Water goal</p>
+
           <p className="mt-2 text-2xl font-semibold text-gray-900">
             {profile.waterGoalMl} ml
           </p>
@@ -188,6 +153,7 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Movement goal</p>
+
           <p className="mt-2 text-2xl font-semibold text-gray-900">
             {profile.movementGoalMin} min
           </p>
@@ -195,6 +161,7 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Main goal</p>
+
           <p className="mt-2 text-lg font-semibold text-gray-900">
             {formatGoal(profile.wellnessGoal)}
           </p>
@@ -202,11 +169,59 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Profile</p>
+
           <p className="mt-2 text-lg font-semibold text-gray-900">
             {profile.displayName || "No display name"}
           </p>
+
           <p className="mt-1 text-sm text-gray-500">{profile.email}</p>
         </article>
+      </section>
+
+      <section className="mt-8">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Last 7 days</h2>
+
+          <p className="mt-1 text-sm text-gray-600">
+            A quick overview of your recent wellness activity.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-gray-500">Check-ins logged</p>
+
+            <p className="mt-2 text-2xl font-semibold text-gray-900">
+              {weeklyCheckIns.length}
+            </p>
+          </article>
+
+          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-gray-500">Habit completion</p>
+
+            <p className="mt-2 text-2xl font-semibold text-gray-900">
+              {trackedHabits > 0 ? `${completionRate}%` : "No data"}
+            </p>
+
+            {trackedHabits > 0 && (
+              <p className="mt-1 text-sm text-gray-500">
+                {completedHabits} of {trackedHabits} tracked entries
+              </p>
+            )}
+          </article>
+
+          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-gray-500">Average mood</p>
+
+            <p className="mt-2 text-2xl font-semibold text-gray-900">
+              {averageMood ?? "No data"}
+            </p>
+
+            {averageMood != null && (
+              <p className="mt-1 text-sm text-gray-500">out of 5</p>
+            )}
+          </article>
+        </div>
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
@@ -241,6 +256,7 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Mood
                   </p>
+
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {formatCheckInLabel(latestCheckIn.moodScore)}
                   </p>
@@ -250,6 +266,7 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Energy
                   </p>
+
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {formatCheckInLabel(latestCheckIn.energyScore)}
                   </p>
@@ -259,6 +276,7 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Sleep
                   </p>
+
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {formatCheckInLabel(latestCheckIn.sleepQualityScore)}
                   </p>
@@ -268,6 +286,7 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Stress
                   </p>
+
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {latestCheckIn.stressScore != null
                       ? formatCheckInLabel(latestCheckIn.stressScore)
@@ -284,6 +303,7 @@ export default async function DashboardPage() {
                       {latestCheckIn.waterMl ?? 0} ml
                     </span>
                   </span>
+
                   <span>
                     Movement:{" "}
                     <span className="font-medium text-gray-900">
@@ -301,6 +321,7 @@ export default async function DashboardPage() {
 
               <div className="mt-5 rounded-2xl bg-gray-50 p-4">
                 <p className="text-sm font-medium text-gray-900">Start today</p>
+
                 <p className="mt-2 text-sm text-gray-600">
                   Add your first daily check-in to begin tracking how you feel.
                 </p>
