@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { WeeklyHabitChart } from "./weekly-habit-chart";
 
 function formatFocusAreas(value: string | null) {
   if (!value) return [];
@@ -79,6 +80,7 @@ export default async function DashboardPage() {
       },
       select: {
         completed: true,
+        date: true,
       },
     }),
   ]);
@@ -103,6 +105,25 @@ export default async function DashboardPage() {
             10,
         ) / 10
       : null;
+
+  const weeklyHabitData = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(sevenDaysAgo);
+    date.setDate(date.getDate() + index);
+
+    const dayKey = date.toISOString().slice(0, 10);
+
+    const completed = weeklyHabitEntries.filter(
+      (entry) =>
+        entry.completed && entry.date.toISOString().slice(0, 10) === dayKey,
+    ).length;
+
+    return {
+      label: date.toLocaleDateString("en-US", {
+        weekday: "short",
+      }),
+      completed,
+    };
+  });
 
   const focusAreas = formatFocusAreas(profile.focusAreas);
 
@@ -222,6 +243,20 @@ export default async function DashboardPage() {
             )}
           </article>
         </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Habit activity
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-600">
+            Your completed habits over the last 7 days.
+          </p>
+        </div>
+
+        <WeeklyHabitChart data={weeklyHabitData} />
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
