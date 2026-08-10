@@ -13,32 +13,43 @@ export default function SignupPage() {
 
   async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     setLoading(true);
     setMessage(null);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: "http://localhost:3000/auth/callback",
-      },
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: "http://localhost:3000/auth/callback",
+        },
+      });
 
-    if (error) {
-      setMessage(error.message);
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      if (data.session) {
+        window.location.href = "/dashboard";
+        return;
+      }
+
+      setMessage(
+        "Account created. If email confirmation is enabled, check your inbox.",
+      );
+    } catch {
+      setMessage("Unexpected error while creating the account.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setMessage(
-      "Account created. If email confirmation is enabled, check your inbox.",
-    );
-    setLoading(false);
   }
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <h1 className="mb-2 text-3xl font-semibold">Sign up</h1>
+
       <p className="mb-6 text-sm text-gray-600">
         Create your Grounded account.
       </p>
@@ -48,10 +59,13 @@ export default function SignupPage() {
           <label htmlFor="email" className="mb-1 block text-sm font-medium">
             Email
           </label>
+
           <input
             id="email"
+            name="email"
             type="email"
             required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
@@ -62,11 +76,14 @@ export default function SignupPage() {
           <label htmlFor="password" className="mb-1 block text-sm font-medium">
             Password
           </label>
+
           <input
             id="password"
+            name="password"
             type="password"
             required
             minLength={6}
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
@@ -82,7 +99,15 @@ export default function SignupPage() {
         </button>
       </form>
 
-      {message ? <p className="mt-4 text-sm text-gray-700">{message}</p> : null}
+      {message ? (
+        <p
+          className="mt-4 text-sm text-gray-700"
+          role="status"
+          aria-live="polite"
+        >
+          {message}
+        </p>
+      ) : null}
 
       <p className="mt-6 text-sm text-gray-600">
         Already have an account?{" "}
