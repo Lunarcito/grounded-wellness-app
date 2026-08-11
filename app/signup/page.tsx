@@ -22,7 +22,7 @@ export default function SignupPage() {
         email: email.trim(),
         password,
         options: {
-          emailRedirectTo: "http://localhost:3000/auth/callback",
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
