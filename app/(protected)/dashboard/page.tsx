@@ -1,5 +1,4 @@
 import { formatCheckInLabel } from "./formatters";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
@@ -153,20 +152,26 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        <div className="mt-6">
-          <Link
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
             href="/check-in"
             className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
           >
             New daily check-in
-          </Link>
+          </a>
+
+          <a
+            href="/habits"
+            className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          >
+            Manage habits
+          </a>
         </div>
       </section>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Water goal</p>
-
           <p className="mt-2 text-2xl font-semibold text-gray-900">
             {profile.waterGoalMl} ml
           </p>
@@ -174,7 +179,6 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Movement goal</p>
-
           <p className="mt-2 text-2xl font-semibold text-gray-900">
             {profile.movementGoalMin} min
           </p>
@@ -182,7 +186,6 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Main goal</p>
-
           <p className="mt-2 text-lg font-semibold text-gray-900">
             {formatGoal(profile.wellnessGoal)}
           </p>
@@ -190,11 +193,9 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">Profile</p>
-
           <p className="mt-2 text-lg font-semibold text-gray-900">
             {profile.displayName || "No display name"}
           </p>
-
           <p className="mt-1 text-sm text-gray-500">{profile.email}</p>
         </article>
       </section>
@@ -202,7 +203,6 @@ export default async function DashboardPage() {
       <section className="mt-8">
         <div className="mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Last 7 days</h2>
-
           <p className="mt-1 text-sm text-gray-600">
             A quick overview of your recent wellness activity.
           </p>
@@ -211,7 +211,6 @@ export default async function DashboardPage() {
         <div className="grid gap-4 sm:grid-cols-3">
           <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <p className="text-sm text-gray-500">Check-ins logged</p>
-
             <p className="mt-2 text-2xl font-semibold text-gray-900">
               {weeklyCheckIns.length}
             </p>
@@ -219,7 +218,6 @@ export default async function DashboardPage() {
 
           <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <p className="text-sm text-gray-500">Habit completion</p>
-
             <p className="mt-2 text-2xl font-semibold text-gray-900">
               {trackedHabits > 0 ? `${completionRate}%` : "No data"}
             </p>
@@ -233,7 +231,6 @@ export default async function DashboardPage() {
 
           <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <p className="text-sm text-gray-500">Average mood</p>
-
             <p className="mt-2 text-2xl font-semibold text-gray-900">
               {averageMood ?? "No data"}
             </p>
@@ -291,7 +288,6 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Mood
                   </p>
-
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {formatCheckInLabel(latestCheckIn.moodScore)}
                   </p>
@@ -301,7 +297,6 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Energy
                   </p>
-
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {formatCheckInLabel(latestCheckIn.energyScore)}
                   </p>
@@ -311,7 +306,6 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Sleep
                   </p>
-
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {formatCheckInLabel(latestCheckIn.sleepQualityScore)}
                   </p>
@@ -321,7 +315,6 @@ export default async function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Stress
                   </p>
-
                   <p className="mt-2 text-base font-semibold text-gray-900">
                     {latestCheckIn.stressScore != null
                       ? formatCheckInLabel(latestCheckIn.stressScore)
@@ -356,7 +349,6 @@ export default async function DashboardPage() {
 
               <div className="mt-5 rounded-2xl bg-gray-50 p-4">
                 <p className="text-sm font-medium text-gray-900">Start today</p>
-
                 <p className="mt-2 text-sm text-gray-600">
                   Add your first daily check-in to begin tracking how you feel.
                 </p>
