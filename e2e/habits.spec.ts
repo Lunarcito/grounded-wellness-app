@@ -14,12 +14,16 @@ function cleanPlaywrightHabits() {
     WHERE "name" LIKE 'Playwright%';
   `;
 
-  execFileSync("npx", ["--no-install", "prisma", "db", "execute", "--stdin"], {
-    cwd: process.cwd(),
-    env: process.env,
-    input: sql,
-    stdio: ["pipe", "inherit", "inherit"],
-  });
+  execFileSync(
+    "npx",
+    ["--no-install", "prisma", "db", "execute", "--stdin"],
+    {
+      cwd: process.cwd(),
+      env: process.env,
+      input: sql,
+      stdio: ["pipe", "inherit", "inherit"],
+    },
+  );
 }
 
 test.beforeAll(() => {
@@ -80,4 +84,20 @@ test("authenticated user can complete a habit for today", async ({ page }) => {
 
   await expect(habitItem).toContainText("Completed today");
   await expect(habitItem.getByText("Done", { exact: true })).toBeVisible();
+});
+
+test("authenticated user can archive a habit", async ({ page }) => {
+  await page.goto("/habits");
+
+  const habitName = `Playwright archive test ${Date.now()}`;
+
+  await page.getByPlaceholder("e.g. Morning walk").fill(habitName);
+  await page.getByRole("button", { name: "Add habit" }).click();
+
+  const habitItem = page.locator("li").filter({ hasText: habitName });
+
+  await expect(habitItem).toBeVisible();
+  await habitItem.getByRole("button", { name: "Archive" }).click();
+
+  await expect(page.getByText(habitName, { exact: true })).not.toBeVisible();
 });
