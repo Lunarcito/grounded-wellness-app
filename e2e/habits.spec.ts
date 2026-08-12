@@ -1,4 +1,34 @@
-import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import { expect, test } from "@playwright/test";
+
+function cleanPlaywrightHabits() {
+  const sql = `
+    DELETE FROM "HabitEntry"
+    WHERE "habitId" IN (
+      SELECT "id"
+      FROM "Habit"
+      WHERE "name" LIKE 'Playwright%'
+    );
+
+    DELETE FROM "Habit"
+    WHERE "name" LIKE 'Playwright%';
+  `;
+
+  execFileSync("npx", ["--no-install", "prisma", "db", "execute", "--stdin"], {
+    cwd: process.cwd(),
+    env: process.env,
+    input: sql,
+    stdio: ["pipe", "inherit", "inherit"],
+  });
+}
+
+test.beforeAll(() => {
+  cleanPlaywrightHabits();
+});
+
+test.afterAll(() => {
+  cleanPlaywrightHabits();
+});
 
 test("authenticated user can open habits page", async ({ page }) => {
   await page.goto("/habits");
