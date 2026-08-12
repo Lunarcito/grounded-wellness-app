@@ -1,9 +1,9 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 
 function getTodayDateUtc() {
   const now = new Date();
@@ -37,7 +37,6 @@ async function getCurrentUserProfileId() {
 
 export async function createHabit(formData: FormData) {
   const profileId = await getCurrentUserProfileId();
-
   const nameValue = formData.get("name");
 
   const name =
@@ -62,7 +61,6 @@ export async function createHabit(formData: FormData) {
 
 export async function completeHabitForToday(formData: FormData) {
   const profileId = await getCurrentUserProfileId();
-
   const habitIdValue = formData.get("habitId");
 
   if (typeof habitIdValue !== "string" || !habitIdValue.trim()) {
@@ -103,6 +101,44 @@ export async function completeHabitForToday(formData: FormData) {
       habitId,
       date: today,
       completed: true,
+    },
+  });
+
+  revalidatePath("/habits");
+  revalidatePath("/dashboard");
+}
+
+export async function archiveHabit(formData: FormData) {
+  const profileId = await getCurrentUserProfileId();
+  const habitIdValue = formData.get("habitId");
+
+  if (typeof habitIdValue !== "string" || !habitIdValue.trim()) {
+    throw new Error("Habit id is required.");
+  }
+
+  const habit = await prisma.habit.findFirst({
+    where: {
+      id: habitIdValue.trim(),
+      profileId,
+      archivedAt: null,
+      isActive: true,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!habit) {
+    throw new Error("Habit not found.");
+  }
+
+  await prisma.habit.update({
+    where: {
+      id: habit.id,
+    },
+    data: {
+      isActive: false,
+      archivedAt: new Date(),
     },
   });
 

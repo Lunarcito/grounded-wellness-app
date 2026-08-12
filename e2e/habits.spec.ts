@@ -14,16 +14,12 @@ function cleanPlaywrightHabits() {
     WHERE "name" LIKE 'Playwright%';
   `;
 
-  execFileSync(
-    "npx",
-    ["--no-install", "prisma", "db", "execute", "--stdin"],
-    {
-      cwd: process.cwd(),
-      env: process.env,
-      input: sql,
-      stdio: ["pipe", "inherit", "inherit"],
-    },
-  );
+  execFileSync("npx", ["--no-install", "prisma", "db", "execute", "--stdin"], {
+    cwd: process.cwd(),
+    env: process.env,
+    input: sql,
+    stdio: ["pipe", "inherit", "inherit"],
+  });
 }
 
 test.beforeAll(() => {

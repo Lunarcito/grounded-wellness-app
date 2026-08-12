@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { completeHabitForToday, createHabit } from "./actions";
+import { archiveHabit, completeHabitForToday, createHabit } from "./actions";
 import { SubmitButton } from "./submit-button";
 import {
   calculateStreakForHabit,
@@ -152,16 +152,29 @@ export default async function HabitsPage() {
                     </p>
                   </div>
 
-                  {completedToday ? (
-                    <span className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700">
-                      Done
-                    </span>
-                  ) : (
-                    <form action={completeHabitForToday}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {completedToday ? (
+                      <span className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700">
+                        Done
+                      </span>
+                    ) : (
+                      <form action={completeHabitForToday}>
+                        <input type="hidden" name="habitId" value={habit.id} />
+                        <SubmitButton />
+                      </form>
+                    )}
+
+                    <form action={archiveHabit}>
                       <input type="hidden" name="habitId" value={habit.id} />
-                      <SubmitButton />
+                      <button
+                        type="submit"
+                        aria-label={`Archive ${habit.name}`}
+                        className="min-h-11 rounded-xl border border-neutral-300 px-4 text-sm font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                      >
+                        Archive
+                      </button>
                     </form>
-                  )}
+                  </div>
                 </li>
               );
             })}
