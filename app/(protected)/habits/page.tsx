@@ -109,12 +109,7 @@ export default async function HabitsPage() {
             placeholder="e.g. Morning walk"
             className="min-h-11 flex-1 rounded-xl border border-neutral-300 px-4 py-3 text-sm outline-none transition focus:border-neutral-500"
           />
-          <button
-            type="submit"
-            className="min-h-11 rounded-xl bg-neutral-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
-          >
-            Add habit
-          </button>
+          <SubmitButton label="Add habit" pendingLabel="Adding..." />
         </form>
       </section>
 
@@ -166,13 +161,11 @@ export default async function HabitsPage() {
 
                     <form action={archiveHabit}>
                       <input type="hidden" name="habitId" value={habit.id} />
-                      <button
-                        type="submit"
-                        aria-label={`Archive ${habit.name}`}
-                        className="min-h-11 rounded-xl border border-neutral-300 px-4 text-sm font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
-                      >
-                        Archive
-                      </button>
+                      <SubmitButton
+                        label="Archive"
+                        pendingLabel="Archiving..."
+                        variant="secondary"
+                      />
                     </form>
                   </div>
                 </li>
