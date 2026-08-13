@@ -1,7 +1,8 @@
-import { formatCheckInLabel } from "./formatters";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { StatCard } from "../../../components/ui/stat-card";
+import { formatCheckInLabel } from "./formatters";
 import { WeeklyHabitChart } from "./weekly-habit-chart";
 
 function formatFocusAreas(value: string | null) {
@@ -43,11 +44,7 @@ export default async function DashboardPage() {
     where: { id: user.id },
   });
 
-  if (!profile) {
-    redirect("/setup");
-  }
-
-  if (!profile.onboardingDone) {
+  if (!profile || !profile.onboardingDone) {
     redirect("/setup");
   }
 
@@ -69,7 +66,6 @@ export default async function DashboardPage() {
       },
       orderBy: { date: "asc" },
     }),
-
     prisma.habitEntry.findMany({
       where: {
         profileId: user.id,
@@ -87,12 +83,9 @@ export default async function DashboardPage() {
   const completedHabits = weeklyHabitEntries.filter(
     (entry) => entry.completed,
   ).length;
-
   const trackedHabits = weeklyHabitEntries.length;
-
   const completionRate =
     trackedHabits > 0 ? Math.round((completedHabits / trackedHabits) * 100) : 0;
-
   const averageMood =
     weeklyCheckIns.length > 0
       ? Math.round(
@@ -110,7 +103,6 @@ export default async function DashboardPage() {
     date.setDate(date.getDate() + index);
 
     const dayKey = date.toISOString().slice(0, 10);
-
     const completed = weeklyHabitEntries.filter(
       (entry) =>
         entry.completed && entry.date.toISOString().slice(0, 10) === dayKey,
@@ -125,7 +117,6 @@ export default async function DashboardPage() {
   });
 
   const focusAreas = formatFocusAreas(profile.focusAreas);
-
   const firstName =
     profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
 
@@ -146,7 +137,6 @@ export default async function DashboardPage() {
           <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
             Setup completed
           </span>
-
           <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
             {profile.timezone}
           </span>
@@ -159,7 +149,6 @@ export default async function DashboardPage() {
           >
             New daily check-in
           </a>
-
           <a
             href="/habits"
             className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
@@ -170,34 +159,17 @@ export default async function DashboardPage() {
       </section>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-gray-500">Water goal</p>
-          <p className="mt-2 text-2xl font-semibold text-gray-900">
-            {profile.waterGoalMl} ml
-          </p>
-        </article>
-
-        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-gray-500">Movement goal</p>
-          <p className="mt-2 text-2xl font-semibold text-gray-900">
-            {profile.movementGoalMin} min
-          </p>
-        </article>
-
-        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-gray-500">Main goal</p>
-          <p className="mt-2 text-lg font-semibold text-gray-900">
-            {formatGoal(profile.wellnessGoal)}
-          </p>
-        </article>
-
-        <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-gray-500">Profile</p>
-          <p className="mt-2 text-lg font-semibold text-gray-900">
-            {profile.displayName || "No display name"}
-          </p>
-          <p className="mt-1 text-sm text-gray-500">{profile.email}</p>
-        </article>
+        <StatCard label="Water goal" value={`${profile.waterGoalMl} ml`} />
+        <StatCard
+          label="Movement goal"
+          value={`${profile.movementGoalMin} min`}
+        />
+        <StatCard label="Main goal" value={formatGoal(profile.wellnessGoal)} />
+        <StatCard
+          label="Profile"
+          value={profile.displayName || "No display name"}
+          description={profile.email}
+        />
       </section>
 
       <section className="mt-8">
@@ -209,36 +181,21 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-gray-500">Check-ins logged</p>
-            <p className="mt-2 text-2xl font-semibold text-gray-900">
-              {weeklyCheckIns.length}
-            </p>
-          </article>
-
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-gray-500">Habit completion</p>
-            <p className="mt-2 text-2xl font-semibold text-gray-900">
-              {trackedHabits > 0 ? `${completionRate}%` : "No data"}
-            </p>
-
-            {trackedHabits > 0 && (
-              <p className="mt-1 text-sm text-gray-500">
-                {completedHabits} of {trackedHabits} tracked entries
-              </p>
-            )}
-          </article>
-
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-gray-500">Average mood</p>
-            <p className="mt-2 text-2xl font-semibold text-gray-900">
-              {averageMood ?? "No data"}
-            </p>
-
-            {averageMood != null && (
-              <p className="mt-1 text-sm text-gray-500">out of 5</p>
-            )}
-          </article>
+          <StatCard label="Check-ins logged" value={weeklyCheckIns.length} />
+          <StatCard
+            label="Habit completion"
+            value={trackedHabits > 0 ? `${completionRate}%` : "No data"}
+            description={
+              trackedHabits > 0
+                ? `${completedHabits} of ${trackedHabits} tracked entries`
+                : undefined
+            }
+          />
+          <StatCard
+            label="Average mood"
+            value={averageMood ?? "No data"}
+            description={averageMood != null ? "out of 5" : undefined}
+          />
         </div>
       </section>
 
@@ -247,7 +204,6 @@ export default async function DashboardPage() {
           <h2 className="text-xl font-semibold text-gray-900">
             Habit activity
           </h2>
-
           <p className="mt-1 text-sm text-gray-600">
             Your completed habits over the last 7 days.
           </p>
@@ -292,7 +248,6 @@ export default async function DashboardPage() {
                     {formatCheckInLabel(latestCheckIn.moodScore)}
                   </p>
                 </div>
-
                 <div className="rounded-2xl bg-gray-50 p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Energy
@@ -301,7 +256,6 @@ export default async function DashboardPage() {
                     {formatCheckInLabel(latestCheckIn.energyScore)}
                   </p>
                 </div>
-
                 <div className="rounded-2xl bg-gray-50 p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Sleep
@@ -310,7 +264,6 @@ export default async function DashboardPage() {
                     {formatCheckInLabel(latestCheckIn.sleepQualityScore)}
                   </p>
                 </div>
-
                 <div className="rounded-2xl bg-gray-50 p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Stress
@@ -331,7 +284,6 @@ export default async function DashboardPage() {
                       {latestCheckIn.waterMl ?? 0} ml
                     </span>
                   </span>
-
                   <span>
                     Movement:{" "}
                     <span className="font-medium text-gray-900">
@@ -346,7 +298,6 @@ export default async function DashboardPage() {
               <p className="mt-3 text-sm leading-6 text-gray-600">
                 You haven’t logged a check-in yet.
               </p>
-
               <div className="mt-5 rounded-2xl bg-gray-50 p-4">
                 <p className="text-sm font-medium text-gray-900">Start today</p>
                 <p className="mt-2 text-sm text-gray-600">
