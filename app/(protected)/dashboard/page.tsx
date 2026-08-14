@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
 import { formatCheckInLabel } from "./formatters";
 import { WeeklyHabitChart } from "./weekly-habit-chart";
+import { EmptyState } from "../../../components/ui/empty-state";
 
 function formatFocusAreas(value: string | null) {
   if (!value) return [];
@@ -228,9 +229,10 @@ export default async function DashboardPage() {
               ))}
             </div>
           ) : (
-            <p className="mt-3 text-sm text-gray-600">
-              No focus areas selected yet.
-            </p>
+            <EmptyState
+              title="No focus areas yet"
+              description="Your selected focus areas will appear here."
+            />
           )}
         </article>
 
@@ -295,15 +297,18 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <>
-              <p className="mt-3 text-sm leading-6 text-gray-600">
-                You haven’t logged a check-in yet.
-              </p>
-              <div className="mt-5 rounded-2xl bg-gray-50 p-4">
-                <p className="text-sm font-medium text-gray-900">Start today</p>
-                <p className="mt-2 text-sm text-gray-600">
-                  Add your first daily check-in to begin tracking how you feel.
-                </p>
-              </div>
+              <EmptyState
+                title="No check-in yet"
+                description="Add your first daily check-in to begin tracking how you feel."
+                action={
+                  <a
+                    href="/check-in"
+                    className="inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                  >
+                    Start check-in
+                  </a>
+                }
+              />
             </>
           )}
         </article>

@@ -9,6 +9,7 @@ import {
   getDateDaysAgoUtc,
   getTodayDateUtc,
 } from "./utils";
+import { EmptyState } from "../../../components/ui/empty-state";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -101,9 +102,10 @@ export default async function HabitsPage() {
         <h2 className="text-lg font-medium">Your habits</h2>
 
         {habits.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-6 text-sm text-neutral-600">
-            No habits yet. Add your first one above.
-          </div>
+          <EmptyState
+            title="No habits yet"
+            description="Add your first habit above to start tracking your progress."
+          />
         ) : (
           <ul className="space-y-3">
             {habits.map((habit) => {
