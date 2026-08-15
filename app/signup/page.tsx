@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -47,7 +49,18 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6">
+      <div className="mb-8 flex justify-center">
+        <Image
+          src="/brand/grounded-logo.png"
+          alt="Grounded"
+          width={200}
+          height={100}
+          className="h-auto w-full max-w-[200px] object-contain"
+          priority
+        />
+      </div>
+
       <h1 className="mb-2 text-3xl font-semibold">Sign up</h1>
 
       <p className="mb-6 text-sm text-gray-600">
@@ -68,7 +81,7 @@ export default function SignupPage() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2"
+            className="w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
           />
         </div>
 
@@ -86,14 +99,14 @@ export default function SignupPage() {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2"
+            className="w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
+          className="w-full rounded-lg bg-black px-4 py-2 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Creating account..." : "Sign up"}
         </button>
@@ -111,9 +124,9 @@ export default function SignupPage() {
 
       <p className="mt-6 text-sm text-gray-600">
         Already have an account?{" "}
-        <a href="/login" className="underline">
+        <Link href="/login" className="underline underline-offset-2">
           Log in
-        </a>
+        </Link>
       </p>
     </main>
   );
