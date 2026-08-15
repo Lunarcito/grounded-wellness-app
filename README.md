@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Grounded
+
+Grounded is a wellness web application designed to help users build consistent habits through a calm, focused, and accessible interface.
+
+The project is currently under development. The frontend is the current focus, with backend integration planned as the next development phase.
+
+## Preview
+
+Screenshots and a live demo will be added after the first deployment.
+
+## Features
+
+- Responsive wellness dashboard.
+- Habit-focused user experience.
+- Login interface with form validation.
+- Responsive layout for mobile and desktop.
+- Accessible keyboard navigation and visible focus states.
+- Loading, empty, and error states.
+- Component and end-to-end testing.
+- Continuous integration with GitHub Actions.
+- Lighthouse-validated frontend quality.
+
+## Tech Stack
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- React Hook Form
+- Vitest
+- React Testing Library
+- Playwright
+- Lighthouse
+- GitHub Actions
+- AWS Amplify Hosting
+
+### Planned backend stack
+
+- Supabase Auth
+- PostgreSQL
+- Prisma
+
+## Quality
+
+The current production build was audited with Lighthouse:
+
+- Performance: 98
+- Accessibility: 100
+- Best Practices: 100
+- SEO: 100
+
+The project also includes automated unit, component, and end-to-end tests. GitHub Actions runs formatting checks, linting, tests, Playwright tests, and the production build on every push.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20 or newer
+- npm
+
+### Installation
+
+Clone the repository and install the dependencies:
+
+```bash
+git clone <your-repository-url>
+cd grounded-wellness-app
+npm ci
+```
+
+### Environment variables
+
+Create a `.env.local` file in the project root:
+
+```env
+E2E_TEST_EMAIL=your-test-email
+E2E_TEST_PASSWORD=your-test-password
+```
+
+Do not commit `.env.local` or any file containing real credentials.
+
+Next.js loads environment variables according to the environment in which the application runs. Public variables intended for browser-side use must use the `NEXT_PUBLIC_` prefix. [Next.js environment variables](https://nextjs.org/docs/pages/guides/environment-variables)
+
+### Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The root route redirects users to the login page.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Run the production build locally
 
-## Learn More
+```bash
+npm run build
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Testing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Run formatting checks:
 
-## Deploy on Vercel
+```bash
+npm run format:check
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Run linting:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint
+```
+
+Run unit and component tests:
+
+```bash
+npm run test:run
+```
+
+Run Playwright tests:
+
+```bash
+npx playwright test
+```
+
+Install Playwright browsers when needed:
+
+```bash
+npx playwright install --with-deps chromium
+```
+
+## Project Status
+
+The frontend is the current development focus.
+
+Completed frontend work includes:
+
+- Responsive UI implementation.
+- Accessible keyboard navigation.
+- Form validation.
+- Automated unit and component tests.
+- End-to-end browser testing.
+- GitHub Actions CI workflow.
+- Lighthouse performance and accessibility audit.
+
+Planned work includes:
+
+- Supabase authentication.
+- PostgreSQL data persistence.
+- Prisma integration.
+- Production deployment and environment configuration.
+
+## Deployment
+
+The application is planned to be deployed using AWS Amplify Hosting.
+
+The deployment will be connected to the project's GitHub repository, with automated builds triggered by changes to the configured branch.
+
+## License
+
+This project is currently a personal portfolio project.
