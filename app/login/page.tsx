@@ -33,80 +33,83 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6">
-      <div className="mb-8 flex justify-center">
-        <Image
-          src="/brand/grounded-logo.png"
-          alt="Grounded"
-          width={200}
-          height={100}
-          className="h-auto w-full max-w-[220px] object-contain"
-          priority
-        />
-      </div>
-
-      <h1 className="mb-2 text-3xl font-semibold">Log in</h1>
-
-      <p className="mb-6 text-sm text-gray-600">
-        Access your Grounded account.
-      </p>
-
-      <form onSubmit={handleLogin} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
-            Email
-          </label>
-
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+    <main className="flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex justify-center">
+          <Image
+            src="/brand/grounded-logo.png"
+            alt="Grounded"
+            width={200}
+            height={100}
+            className="h-auto w-full max-w-[200px] object-contain"
+            priority
           />
         </div>
 
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            Password
-          </label>
+        <h1 className="mb-6 text-sm text-gray-600">
+          Access your Grounded account
+        </h1>
 
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
-          />
-        </div>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="mb-1 block text-sm font-medium">
+              Email
+            </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-black px-4 py-2 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? "Logging in..." : "Log in"}
-        </button>
-      </form>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+            />
+          </div>
 
-      {message ? (
-        <p role="alert" className="mt-4 text-sm text-red-600">
-          {message}
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-1 block text-sm font-medium"
+            >
+              Password
+            </label>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-black px-4 py-2 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Log in"}
+          </button>
+        </form>
+
+        {message ? (
+          <p role="alert" className="mt-4 text-sm text-red-600">
+            {message}
+          </p>
+        ) : null}
+
+        <p className="mt-6 text-sm text-gray-600">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="underline underline-offset-2">
+            Sign up
+          </Link>
         </p>
-      ) : null}
-
-      <p className="mt-6 text-sm text-gray-600">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" className="underline underline-offset-2">
-          Sign up
-        </Link>
-      </p>
+      </div>
     </main>
   );
 }
