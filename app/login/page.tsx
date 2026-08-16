@@ -41,6 +41,7 @@ export default function LoginPage() {
             alt="Grounded"
             width={200}
             height={100}
+            sizes="(max-width: 640px) 160px, 200px"
             className="h-auto w-full max-w-[200px] object-contain"
             priority
           />
