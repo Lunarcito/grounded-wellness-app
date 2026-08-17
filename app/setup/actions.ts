@@ -17,7 +17,6 @@ export async function completeSetup(formData: FormData) {
   }
 
   const displayNameValue = formData.get("displayName");
-  const timezoneValue = formData.get("timezone");
   const wellnessGoalValue = formData.get("wellnessGoal");
   const focusAreasValues = formData.getAll("focusAreas");
   const waterGoalMlValue = formData.get("waterGoalMl");
@@ -27,11 +26,6 @@ export async function completeSetup(formData: FormData) {
     typeof displayNameValue === "string" && displayNameValue.trim().length > 0
       ? displayNameValue.trim()
       : null;
-
-  const timezone =
-    typeof timezoneValue === "string" && timezoneValue.trim().length > 0
-      ? timezoneValue.trim()
-      : "UTC";
 
   const wellnessGoal =
     typeof wellnessGoalValue === "string" && wellnessGoalValue.trim().length > 0
@@ -52,7 +46,6 @@ export async function completeSetup(formData: FormData) {
     data: {
       email: user.email,
       displayName,
-      timezone,
       wellnessGoal,
       focusAreas,
       waterGoalMl: Number.isFinite(waterGoalMl) ? waterGoalMl : 2000,

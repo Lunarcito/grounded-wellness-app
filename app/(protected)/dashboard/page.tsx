@@ -138,9 +138,6 @@ export default async function DashboardPage() {
           <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
             Setup completed
           </span>
-          <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
-            {profile.timezone}
-          </span>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">

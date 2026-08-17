@@ -63,24 +63,7 @@ export default async function SetupPage() {
               name="displayName"
               type="text"
               defaultValue={profile.displayName ?? ""}
-              placeholder="Carolina"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-gray-900"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="timezone"
-              className="mb-2 block text-sm font-medium text-gray-900"
-            >
-              Timezone
-            </label>
-            <input
-              id="timezone"
-              name="timezone"
-              type="text"
-              defaultValue={profile.timezone}
-              placeholder="Europe/Madrid"
+              placeholder="Your name"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-gray-900"
             />
           </div>
