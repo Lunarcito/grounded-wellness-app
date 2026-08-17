@@ -2,11 +2,11 @@
 
 Grounded is a wellness web application designed to help users build consistent habits through a calm, focused, and accessible interface.
 
-The project is currently under development. The frontend is the current focus, with backend integration planned as the next development phase.
+The project is currently under active development. The frontend is complete, and the core backend (database, Prisma ORM, server-side data access, and Supabase authentication) is implemented.
 
 ## Preview
 
-Screenshots and a live demo will be added after the first deployment.
+Screenshots and a live demo will be added after the first production deployment.
 
 ## Features
 
@@ -22,7 +22,7 @@ Screenshots and a live demo will be added after the first deployment.
 
 ## Tech Stack
 
-- Next.js
+- Next.js (App Router, server actions)
 - React
 - TypeScript
 - Tailwind CSS
@@ -33,18 +33,19 @@ Screenshots and a live demo will be added after the first deployment.
 - Lighthouse
 - GitHub Actions
 - AWS Amplify Hosting
+- Prisma
 
-### Planned backend stack
+### Backend
 
 - Supabase Auth
 - PostgreSQL
-- Prisma
+- Prisma ORM
 
 ## Quality
 
-The current production build was audited with Lighthouse:
+The latest Lighthouse audit of the production build reported:
 
-- Performance: 98
+- Performance: 100
 - Accessibility: 100
 - Best Practices: 100
 - SEO: 100
@@ -70,14 +71,20 @@ npm ci
 
 ### Environment variables
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` file in the project root for local development:
 
 ```env
 E2E_TEST_EMAIL=your-test-email
 E2E_TEST_PASSWORD=your-test-password
 ```
 
-Do not commit `.env.local` or any file containing real credentials.
+For production builds (e.g., AWS Amplify), the build process creates a `.env.production` file that includes:
+
+```env
+DATABASE_URL=<your-production-database-url>
+```
+
+Do not commit `.env.local`, `.env.production`, or any file containing real credentials. These files are ignored by `.gitignore`.
 
 Next.js loads environment variables according to the environment in which the application runs. Public variables intended for browser-side use must use the `NEXT_PUBLIC_` prefix. [Next.js environment variables](https://nextjs.org/docs/pages/guides/environment-variables)
 
@@ -134,9 +141,9 @@ npx playwright install --with-deps chromium
 
 ## Project Status
 
-The frontend is the current development focus.
+The frontend is complete. The core backend (database schema, Prisma ORM, server-side data access, and Supabase authentication) is implemented.
 
-Completed frontend work includes:
+Completed work includes:
 
 - Responsive UI implementation.
 - Accessible keyboard navigation.
@@ -144,20 +151,23 @@ Completed frontend work includes:
 - Automated unit and component tests.
 - End-to-end browser testing.
 - GitHub Actions CI workflow.
-- Lighthouse performance and accessibility audit.
+- Lighthouse performance and accessibility audit (all scores 100).
+- Database schema and migrations.
+- Prisma ORM integration.
+- Server-side data access logic.
+- Supabase authentication (sign in, session management).
 
-Planned work includes:
+Next work includes:
 
-- Supabase authentication.
-- PostgreSQL data persistence.
-- Prisma integration.
+- Expanding habit-tracking features and data-driven UI.
+- Optional: sign-up flow, password recovery, and additional auth features.
 - Production deployment and environment configuration.
 
 ## Deployment
 
-The application is planned to be deployed using AWS Amplify Hosting.
+The application is configured for deployment on AWS Amplify Hosting.
 
-The deployment will be connected to the project's GitHub repository, with automated builds triggered by changes to the configured branch.
+The deployment is connected to the project's GitHub repository. Automated builds are triggered by changes to the `main` branch using the `amplify.yml` build specification.
 
 ## License
 
