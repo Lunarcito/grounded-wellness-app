@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const supabase = createClient();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,9 +21,11 @@ export default function LoginPage() {
     setMessage(null);
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: email.trim(),
       password,
     });
+
+    setPassword("");
 
     if (error) {
       setMessage(error.message);
@@ -29,7 +33,7 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.href = "/dashboard";
+    router.replace("/dashboard");
   }
 
   return (
