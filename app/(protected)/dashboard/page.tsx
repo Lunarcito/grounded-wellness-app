@@ -156,17 +156,11 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="mt-8 grid gap-4 sm:grid-cols-2">
         <StatCard label="Water goal" value={`${profile.waterGoalMl} ml`} />
         <StatCard
           label="Movement goal"
           value={`${profile.movementGoalMin} min`}
-        />
-        <StatCard label="Main goal" value={formatGoal(profile.wellnessGoal)} />
-        <StatCard
-          label="Profile"
-          value={profile.displayName || "No display name"}
-          description={profile.email}
         />
       </section>
 
