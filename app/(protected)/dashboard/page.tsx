@@ -3,8 +3,68 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
 import { formatCheckInLabel } from "./formatters";
-import { WeeklyHabitChart } from "./weekly-habit-chart";
 import { EmptyState } from "../../../components/ui/empty-state";
+
+type WeeklyHabitData = {
+  label: string;
+  completed: number;
+};
+
+function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
+  const totalCompleted = data.reduce((total, day) => total + day.completed, 0);
+
+  const activeDays = data.filter((day) => day.completed > 0).length;
+
+  return (
+    <div className="mt-6">
+      <div className="grid grid-cols-7 gap-2 sm:gap-3">
+        {data.map((day) => (
+          <div key={day.label} className="space-y-2 text-center">
+            <span className="block text-xs font-medium text-gray-500">
+              {day.label}
+            </span>
+
+            <div
+              className={`flex aspect-square items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
+                day.completed > 0
+                  ? "border-gray-900 bg-gray-900 text-white"
+                  : "border-gray-200 bg-gray-50 text-gray-400"
+              }`}
+              aria-label={`${day.completed} completed habits on ${day.label}`}
+            >
+              {day.completed}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl bg-gray-50 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+            Completed
+          </p>
+          <p className="mt-1 text-2xl font-semibold text-gray-900">
+            {totalCompleted}
+          </p>
+          <p className="mt-1 text-sm text-gray-600">habit entries this week</p>
+        </div>
+
+        <div className="rounded-xl bg-gray-50 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+            Active days
+          </p>
+          <p className="mt-1 text-2xl font-semibold text-gray-900">
+            {activeDays}
+            <span className="text-base font-normal text-gray-500"> / 7</span>
+          </p>
+          <p className="mt-1 text-sm text-gray-600">
+            days with completed habits
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function formatFocusAreas(value: string | null) {
   if (!value) return [];
@@ -191,17 +251,24 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Habit activity
+      <section
+        aria-labelledby="habit-consistency-title"
+        className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+      >
+        <div>
+          <h2
+            id="habit-consistency-title"
+            className="text-xl font-semibold text-gray-900"
+          >
+            Habit consistency
           </h2>
+
           <p className="mt-1 text-sm text-gray-600">
             Your completed habits over the last 7 days.
           </p>
         </div>
 
-        <WeeklyHabitChart data={weeklyHabitData} />
+        <WeeklyHabitGrid data={weeklyHabitData} />
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
@@ -287,20 +354,18 @@ export default async function DashboardPage() {
               </div>
             </div>
           ) : (
-            <>
-              <EmptyState
-                title="No check-in yet"
-                description="Add your first daily check-in to begin tracking how you feel."
-                action={
-                  <a
-                    href="/check-in"
-                    className="inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
-                  >
-                    Start check-in
-                  </a>
-                }
-              />
-            </>
+            <EmptyState
+              title="No check-in yet"
+              description="Add your first daily check-in to begin tracking how you feel."
+              action={
+                <a
+                  href="/check-in"
+                  className="inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                >
+                  Start check-in
+                </a>
+              }
+            />
           )}
         </article>
       </section>

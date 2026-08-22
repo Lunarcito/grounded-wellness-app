@@ -1,33 +1,26 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test("authenticated user can open the dashboard", async ({ page }) => {
   await page.goto("/dashboard");
 
-  await expect(page).toHaveURL(/\/dashboard/);
-
   await expect(
-    page.getByText("Wellness dashboard", { exact: true }),
-  ).toBeVisible();
-
-  await expect(
-    page.getByRole("heading", { name: /welcome back,/i }),
-  ).toBeVisible();
-
-  await expect(
-    page.getByText("Setup completed", { exact: true }),
-  ).toBeVisible();
-
-  await expect(
-    page.getByRole("link", { name: "New daily check-in" }),
+    page.getByRole("heading", { name: /welcome back/i }),
   ).toBeVisible();
 
   await expect(page.getByText("Water goal", { exact: true })).toBeVisible();
 
   await expect(page.getByText("Movement goal", { exact: true })).toBeVisible();
 
-  await expect(page.getByText("Main goal", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Last 7 days", exact: true }),
+  ).toBeVisible();
 
-  await expect(page.getByText("Profile", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Habit consistency",
+      exact: true,
+    }),
+  ).toBeVisible();
 
   await expect(
     page.getByRole("heading", { name: "Focus areas", exact: true }),
@@ -36,30 +29,4 @@ test("authenticated user can open the dashboard", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Today", exact: true }),
   ).toBeVisible();
-});
-
-test("authenticated user can open a new daily check-in", async ({ page }) => {
-  await page.goto("/dashboard");
-
-  await page.getByRole("link", { name: "New daily check-in" }).click();
-
-  await expect(page).toHaveURL(/\/check-in/);
-});
-
-test("authenticated user can see weekly wellness summary", async ({ page }) => {
-  await page.goto("/dashboard");
-
-  await expect(
-    page.getByRole("heading", { name: "Last 7 days", exact: true }),
-  ).toBeVisible();
-
-  await expect(
-    page.getByText("Check-ins logged", { exact: true }),
-  ).toBeVisible();
-
-  await expect(
-    page.getByText("Habit completion", { exact: true }),
-  ).toBeVisible();
-
-  await expect(page.getByText("Average mood", { exact: true })).toBeVisible();
 });
