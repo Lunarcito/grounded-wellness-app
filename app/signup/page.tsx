@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -52,15 +51,15 @@ export default function SignupPage() {
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex justify-center">
-          <Image
-            src="/brand/grounded-logo.png"
-            alt="Grounded"
-            width={200}
-            height={100}
-            sizes="(max-width: 640px) 160px, 200px"
-            className="h-auto w-full max-w-[200px] object-contain"
-            priority
-          />
+          <div className="mb-8 flex justify-center">
+            <img
+              src="/brand/grounded-logo.png"
+              alt="Grounded"
+              width={200}
+              height={100}
+              className="h-auto w-[200px] object-contain"
+            />
+          </div>
         </div>
 
         <h1 className="mb-6 text-sm text-gray-600">
