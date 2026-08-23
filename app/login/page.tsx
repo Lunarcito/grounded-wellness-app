@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
 
 export default function LoginPage() {
   const supabase = createClient();
@@ -40,7 +41,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 flex justify-center">
           <div className="mb-8 flex justify-center">
-            <img
+            <Image
               src="/brand/grounded-logo.png"
               alt="Grounded"
               width={200}

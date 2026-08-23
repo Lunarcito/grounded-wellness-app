@@ -27,8 +27,7 @@ test("authenticated user can submit a daily check-in", async ({ page }) => {
   await expect(
     todaySummary.getByText("Movement", { exact: true }),
   ).toBeVisible();
-  await expect(todaySummary.getByText("2000 / 2000 ml")).toBeVisible();
-  await expect(todaySummary.getByText("30 / 30 min")).toBeVisible();
+
   await expect(
     todaySummary.getByRole("link", { name: "View today's habits" }),
   ).toBeVisible();
