@@ -283,7 +283,10 @@ export default async function DashboardPage() {
           )}
         </article>
 
-        <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <article
+          data-testid="today-summary"
+          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+        >
           <h2 className="text-xl font-semibold text-gray-900">Today</h2>
           {latestCheckIn ? (
             <div className="mt-4 space-y-4">

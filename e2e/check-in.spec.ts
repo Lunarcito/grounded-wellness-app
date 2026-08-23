@@ -12,7 +12,6 @@ test("authenticated user can submit a daily check-in", async ({ page }) => {
   await page.getByLabel("Energy").selectOption("3");
   await page.getByLabel("Sleep quality").selectOption("4");
   await page.getByLabel("Stress").selectOption("2");
-
   await page.getByLabel("Water today (ml)").fill("2000");
   await page.getByLabel("Movement today (min)").fill("30");
 
@@ -21,8 +20,18 @@ test("authenticated user can submit a daily check-in", async ({ page }) => {
     .click();
 
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(page.getByText("Water:", { exact: false })).toBeVisible();
-  await expect(page.getByText("Movement:", { exact: false })).toBeVisible();
+
+  const todaySummary = page.getByTestId("today-summary");
+  await expect(todaySummary).toBeVisible();
+  await expect(todaySummary.getByText("Water", { exact: true })).toBeVisible();
+  await expect(
+    todaySummary.getByText("Movement", { exact: true }),
+  ).toBeVisible();
+  await expect(todaySummary.getByText("2000 / 2000 ml")).toBeVisible();
+  await expect(todaySummary.getByText("30 / 30 min")).toBeVisible();
+  await expect(
+    todaySummary.getByRole("link", { name: "View today's habits" }),
+  ).toBeVisible();
 });
 
 test.describe("unauthenticated access", () => {
@@ -35,7 +44,6 @@ test.describe("unauthenticated access", () => {
 
   test("redirects unauthenticated users to login", async ({ page }) => {
     await page.goto("/check-in");
-
     await expect(page).toHaveURL(/\/login/);
   });
 });
@@ -47,12 +55,10 @@ test("authenticated user can update today's check-in", async ({ page }) => {
   await page.getByLabel("Energy").selectOption("4");
   await page.getByLabel("Sleep quality").selectOption("3");
   await page.getByLabel("Stress").selectOption("1");
-
   await page.getByLabel("Water today (ml)").fill("2500");
   await page.getByLabel("Movement today (min)").fill("45");
 
   await page.getByRole("button", { name: "Save check-in" }).click();
-
   await expect(page).toHaveURL(/\/dashboard/);
 
   await page.goto("/check-in");
