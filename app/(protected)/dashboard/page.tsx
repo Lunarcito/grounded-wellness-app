@@ -2,8 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
-import { formatCheckInLabel } from "./formatters";
 import { EmptyState } from "../../../components/ui/empty-state";
+import { ProgressMetric } from "../../../components/ui/progress-metric";
+import { formatCheckInLabel } from "./formatters";
 import Link from "next/link";
 
 type WeeklyHabitData = {
@@ -13,7 +14,6 @@ type WeeklyHabitData = {
 
 function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
   const totalCompleted = data.reduce((total, day) => total + day.completed, 0);
-
   const activeDays = data.filter((day) => day.completed > 0).length;
 
   return (
@@ -24,7 +24,6 @@ function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
             <span className="block text-xs font-medium text-gray-500">
               {day.label}
             </span>
-
             <div
               className={`flex aspect-square items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
                 day.completed > 0
@@ -82,15 +81,6 @@ function formatFocusAreas(value: string | null) {
     );
 }
 
-function formatGoal(value: string | null) {
-  if (!value) return "Not set yet";
-
-  return value
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
 function getDateKey(date: Date) {
   return date.toLocaleDateString("en-CA");
 }
@@ -99,10 +89,7 @@ function getCurrentStreak(data: WeeklyHabitData[]) {
   let streak = 0;
 
   for (let index = data.length - 1; index >= 0; index -= 1) {
-    if (data[index].completed === 0) {
-      break;
-    }
-
+    if (data[index].completed === 0) break;
     streak += 1;
   }
 
@@ -111,22 +98,17 @@ function getCurrentStreak(data: WeeklyHabitData[]) {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user || !user.email) {
-    redirect("/login");
-  }
+  if (!user || !user.email) redirect("/login");
 
   const profile = await prisma.profile.findUnique({
     where: { id: user.id },
   });
 
-  if (!profile || !profile.onboardingDone) {
-    redirect("/setup");
-  }
+  if (!profile || !profile.onboardingDone) redirect("/setup");
 
   const latestCheckIn = await prisma.dailyCheckIn.findFirst({
     where: { profileId: user.id },
@@ -143,23 +125,16 @@ export default async function DashboardPage() {
     prisma.dailyCheckIn.findMany({
       where: {
         profileId: user.id,
-        date: {
-          gte: sevenDaysAgo,
-        },
+        date: { gte: sevenDaysAgo },
       },
       orderBy: { date: "asc" },
     }),
     prisma.habitEntry.findMany({
       where: {
         profileId: user.id,
-        date: {
-          gte: sevenDaysAgo,
-        },
+        date: { gte: sevenDaysAgo },
       },
-      select: {
-        completed: true,
-        date: true,
-      },
+      select: { completed: true, date: true },
     }),
   ]);
 
@@ -184,7 +159,6 @@ export default async function DashboardPage() {
   const weeklyHabitData = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(sevenDaysAgo);
     date.setDate(sevenDaysAgo.getDate() + index);
-
     const dayKey = getDateKey(date);
 
     const completed = weeklyHabitEntries.filter(
@@ -192,9 +166,7 @@ export default async function DashboardPage() {
     ).length;
 
     return {
-      label: date.toLocaleDateString("en-US", {
-        weekday: "short",
-      }),
+      label: date.toLocaleDateString("en-US", { weekday: "short" }),
       completed,
     };
   });
@@ -208,21 +180,17 @@ export default async function DashboardPage() {
     <main className="mx-auto min-h-screen max-w-5xl px-6 py-12">
       <section className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
         <p className="text-sm font-medium text-gray-500">Wellness dashboard</p>
-
         <h1 className="mt-2 text-3xl font-semibold text-gray-900">
           Welcome back, {firstName}
         </h1>
-
         <p className="mt-3 max-w-2xl text-base text-gray-600">
           Your setup is complete and your personal wellness space is ready.
         </p>
-
         <div className="mt-6 flex flex-wrap gap-3">
           <span className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
             Setup completed
           </span>
         </div>
-
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/check-in"
@@ -239,14 +207,6 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2">
-        <StatCard label="Water goal" value={`${profile.waterGoalMl} ml`} />
-        <StatCard
-          label="Movement goal"
-          value={`${profile.movementGoalMin} min`}
-        />
-      </section>
-
       <section className="mt-8">
         <div className="mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Last 7 days</h2>
@@ -257,7 +217,6 @@ export default async function DashboardPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Check-ins logged" value={weeklyCheckIns.length} />
-
           <StatCard
             label="Habit completion"
             value={trackedHabits > 0 ? `${completionRate}%` : "No data"}
@@ -267,7 +226,6 @@ export default async function DashboardPage() {
                 : undefined
             }
           />
-
           <StatCard
             label="Active streak"
             value={`${currentStreak} ${currentStreak === 1 ? "day" : "days"}`}
@@ -277,7 +235,6 @@ export default async function DashboardPage() {
                 : "Complete a habit to begin"
             }
           />
-
           <StatCard
             label="Average mood"
             value={averageMood ?? "No data"}
@@ -297,19 +254,16 @@ export default async function DashboardPage() {
           >
             Habit consistency
           </h2>
-
           <p className="mt-1 text-sm text-gray-600">
             Your completed habits over the last 7 days.
           </p>
         </div>
-
         <WeeklyHabitGrid data={weeklyHabitData} />
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
         <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">Focus areas</h2>
-
           {focusAreas.length > 0 ? (
             <div className="mt-4 flex flex-wrap gap-3">
               {focusAreas.map((area) => (
@@ -331,7 +285,6 @@ export default async function DashboardPage() {
 
         <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">Today</h2>
-
           {latestCheckIn ? (
             <div className="mt-4 space-y-4">
               <div className="grid grid-cols-2 gap-3">
@@ -371,35 +324,31 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                  <span>
-                    Water:{" "}
-                    <span className="font-medium text-gray-900">
-                      {latestCheckIn.waterMl ?? 0} ml
-                    </span>
-                  </span>
-                  <span>
-                    Movement:{" "}
-                    <span className="font-medium text-gray-900">
-                      {latestCheckIn.movementMin ?? 0} min
-                    </span>
-                  </span>
-                </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ProgressMetric
+                  label="Water"
+                  value={latestCheckIn.waterMl}
+                  goal={profile.waterGoalMl}
+                  unit="ml"
+                />
+                <ProgressMetric
+                  label="Movement"
+                  value={latestCheckIn.movementMin}
+                  goal={profile.movementGoalMin}
+                  unit="min"
+                />
               </div>
 
               <div className="border-t border-gray-200 pt-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Your next step
                 </p>
-
                 <p className="mt-2 text-sm text-gray-700">
                   Keep your momentum by completing today&apos;s habits.
                 </p>
-
                 <Link
                   href="/habits"
-                  className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                  className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                 >
                   View today&apos;s habits
                 </Link>
@@ -412,7 +361,7 @@ export default async function DashboardPage() {
               action={
                 <Link
                   href="/check-in"
-                  className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
                 >
                   New daily check-in
                 </Link>
