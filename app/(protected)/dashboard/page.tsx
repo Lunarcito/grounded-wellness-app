@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
 import { formatCheckInLabel } from "./formatters";
 import { EmptyState } from "../../../components/ui/empty-state";
+import Link from "next/link";
 
 type WeeklyHabitData = {
   label: string;
@@ -90,6 +91,24 @@ function formatGoal(value: string | null) {
     .join(" ");
 }
 
+function getDateKey(date: Date) {
+  return date.toLocaleDateString("en-CA");
+}
+
+function getCurrentStreak(data: WeeklyHabitData[]) {
+  let streak = 0;
+
+  for (let index = data.length - 1; index >= 0; index -= 1) {
+    if (data[index].completed === 0) {
+      break;
+    }
+
+    streak += 1;
+  }
+
+  return streak;
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
 
@@ -114,8 +133,11 @@ export default async function DashboardPage() {
     orderBy: { date: "desc" },
   });
 
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 6);
 
   const [weeklyCheckIns, weeklyHabitEntries] = await Promise.all([
     prisma.dailyCheckIn.findMany({
@@ -161,12 +183,12 @@ export default async function DashboardPage() {
 
   const weeklyHabitData = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(sevenDaysAgo);
-    date.setDate(date.getDate() + index);
+    date.setDate(sevenDaysAgo.getDate() + index);
 
-    const dayKey = date.toISOString().slice(0, 10);
+    const dayKey = getDateKey(date);
+
     const completed = weeklyHabitEntries.filter(
-      (entry) =>
-        entry.completed && entry.date.toISOString().slice(0, 10) === dayKey,
+      (entry) => entry.completed && getDateKey(entry.date) === dayKey,
     ).length;
 
     return {
@@ -177,6 +199,7 @@ export default async function DashboardPage() {
     };
   });
 
+  const currentStreak = getCurrentStreak(weeklyHabitData);
   const focusAreas = formatFocusAreas(profile.focusAreas);
   const firstName =
     profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
@@ -201,18 +224,18 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <a
+          <Link
             href="/check-in"
-            className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
           >
             New daily check-in
-          </a>
-          <a
+          </Link>
+          <Link
             href="/habits"
-            className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
           >
             Manage habits
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -232,8 +255,9 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Check-ins logged" value={weeklyCheckIns.length} />
+
           <StatCard
             label="Habit completion"
             value={trackedHabits > 0 ? `${completionRate}%` : "No data"}
@@ -243,6 +267,17 @@ export default async function DashboardPage() {
                 : undefined
             }
           />
+
+          <StatCard
+            label="Active streak"
+            value={`${currentStreak} ${currentStreak === 1 ? "day" : "days"}`}
+            description={
+              currentStreak > 0
+                ? "Keep building your routine"
+                : "Complete a habit to begin"
+            }
+          />
+
           <StatCard
             label="Average mood"
             value={averageMood ?? "No data"}
@@ -352,18 +387,35 @@ export default async function DashboardPage() {
                   </span>
                 </div>
               </div>
+
+              <div className="border-t border-gray-200 pt-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Your next step
+                </p>
+
+                <p className="mt-2 text-sm text-gray-700">
+                  Keep your momentum by completing today&apos;s habits.
+                </p>
+
+                <Link
+                  href="/habits"
+                  className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                >
+                  View today&apos;s habits
+                </Link>
+              </div>
             </div>
           ) : (
             <EmptyState
               title="No check-in yet"
               description="Add your first daily check-in to begin tracking how you feel."
               action={
-                <a
+                <Link
                   href="/check-in"
-                  className="inline-flex min-h-11 items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                  className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
                 >
-                  Start check-in
-                </a>
+                  New daily check-in
+                </Link>
               }
             />
           )}
