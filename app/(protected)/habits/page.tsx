@@ -121,6 +121,7 @@ export default async function HabitsPage() {
               return (
                 <li
                   key={habit.id}
+                  data-testid={`habit-item-${habit.id}`}
                   className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="space-y-1">
@@ -141,7 +142,10 @@ export default async function HabitsPage() {
                     ) : (
                       <form action={completeHabitForToday}>
                         <input type="hidden" name="habitId" value={habit.id} />
-                        <SubmitButton />
+                        <SubmitButton
+                          label="Complete today"
+                          pendingLabel="Completing..."
+                        />
                       </form>
                     )}
 
