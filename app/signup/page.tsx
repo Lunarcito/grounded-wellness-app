@@ -56,9 +56,9 @@ export default function SignupPage() {
             <Image
               src="/brand/grounded-logo.png"
               alt="Grounded"
-              width={200}
-              height={100}
-              className="h-auto w-[200px] object-contain"
+              width={600}
+              height={205}
+              priority
             />
           </div>
         </div>
