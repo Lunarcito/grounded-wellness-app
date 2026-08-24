@@ -118,21 +118,24 @@ export default async function DashboardPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 6);
+  const dayOfWeek = today.getDay();
+  const daysSinceMonday = (dayOfWeek + 6) % 7;
+
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - daysSinceMonday);
 
   const [weeklyCheckIns, weeklyHabitEntries] = await Promise.all([
     prisma.dailyCheckIn.findMany({
       where: {
         profileId: user.id,
-        date: { gte: sevenDaysAgo },
+        date: { gte: weekStart },
       },
       orderBy: { date: "asc" },
     }),
     prisma.habitEntry.findMany({
       where: {
         profileId: user.id,
-        date: { gte: sevenDaysAgo },
+        date: { gte: weekStart },
       },
       select: { completed: true, date: true },
     }),
@@ -157,8 +160,8 @@ export default async function DashboardPage() {
       : null;
 
   const weeklyHabitData = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(sevenDaysAgo);
-    date.setDate(sevenDaysAgo.getDate() + index);
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + index);
     const dayKey = getDateKey(date);
 
     const completed = weeklyHabitEntries.filter(
@@ -209,7 +212,7 @@ export default async function DashboardPage() {
 
       <section className="mt-8">
         <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Last 7 days</h2>
+          <h2 className="text-xl font-semibold text-gray-900">This week</h2>
           <p className="mt-1 text-sm text-gray-600">
             A quick overview of your recent wellness activity.
           </p>

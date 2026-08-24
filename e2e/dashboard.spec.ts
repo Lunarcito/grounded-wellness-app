@@ -9,7 +9,7 @@ test("authenticated user can open the dashboard", async ({ page }) => {
   ).toBeVisible();
 
   await expect(
-    page.getByRole("heading", { name: "Last 7 days", exact: true }),
+    page.getByRole("heading", { name: "This week", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
