@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
 import { archiveHabit, completeHabitForToday, createHabit } from "./actions";
 import { SubmitButton } from "./submit-button";
+import { HabitHistory } from "./habit-history";
 import {
   calculateStreakForHabit,
   getDateDaysAgoUtc,
@@ -13,7 +14,6 @@ import { EmptyState } from "../../../components/ui/empty-state";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -49,22 +49,18 @@ export default async function HabitsPage() {
             lte: today,
           },
         },
-        select: {
-          date: true,
-        },
-        orderBy: {
-          date: "desc",
-        },
+        select: { date: true },
+        orderBy: { date: "desc" },
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
   });
 
   const totalHabits = habits.length;
   const completedTodayCount = habits.filter((habit) =>
-    habit.entries.some((entry) => entry.date.toISOString().slice(0, 10) === todayKey),
+    habit.entries.some(
+      (entry) => entry.date.toISOString().slice(0, 10) === todayKey,
+    ),
   ).length;
   const completionPercentage =
     totalHabits > 0 ? Math.round((completedTodayCount / totalHabits) * 100) : 0;
@@ -123,45 +119,60 @@ export default async function HabitsPage() {
                 <li
                   key={habit.id}
                   data-testid={`habit-item-${habit.id}`}
-                  className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm"
                 >
-                  <div className="space-y-1">
-                    <p className="font-medium text-neutral-900">{habit.name}</p>
-                    <p className="text-sm text-neutral-500">
-                      {streak > 0 ? `${streak}-day streak` : "No streak yet"}
-                    </p>
-                    <p className="text-sm text-neutral-500">
-                      {completedToday ? "Completed today" : "Not completed yet"}
-                    </p>
-                  </div>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-1">
+                      <p className="font-medium text-neutral-900">
+                        {habit.name}
+                      </p>
+                      <p className="text-sm text-neutral-500">
+                        {streak > 0 ? `${streak}-day streak` : "No streak yet"}
+                      </p>
+                      <p className="text-sm text-neutral-500">
+                        {completedToday
+                          ? "Completed today"
+                          : "Not completed yet"}
+                      </p>
+                    </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    {completedToday ? (
-                      <span
-                        role="status"
-                        className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700"
-                      >
-                        Done
-                      </span>
-                    ) : (
-                      <form action={completeHabitForToday}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {completedToday ? (
+                        <span
+                          role="status"
+                          className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700"
+                        >
+                          Done
+                        </span>
+                      ) : (
+                        <form action={completeHabitForToday}>
+                          <input
+                            type="hidden"
+                            name="habitId"
+                            value={habit.id}
+                          />
+                          <SubmitButton
+                            label="Complete today"
+                            pendingLabel="Completing..."
+                          />
+                        </form>
+                      )}
+
+                      <form action={archiveHabit}>
                         <input type="hidden" name="habitId" value={habit.id} />
                         <SubmitButton
-                          label="Complete today"
-                          pendingLabel="Completing..."
+                          label="Archive"
+                          pendingLabel="Archiving..."
+                          variant="secondary"
                         />
                       </form>
-                    )}
-
-                    <form action={archiveHabit}>
-                      <input type="hidden" name="habitId" value={habit.id} />
-                      <SubmitButton
-                        label="Archive"
-                        pendingLabel="Archiving..."
-                        variant="secondary"
-                      />
-                    </form>
+                    </div>
                   </div>
+
+                  <HabitHistory
+                    dates={habit.entries.map((entry) => entry.date)}
+                    today={today}
+                  />
                 </li>
               );
             })}
