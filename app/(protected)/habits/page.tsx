@@ -31,6 +31,7 @@ export default async function HabitsPage() {
   }
 
   const today = getTodayDateUtc();
+  const todayKey = today.toISOString().slice(0, 10);
   const thirtyDaysAgo = getDateDaysAgoUtc(29);
 
   const habits = await prisma.habit.findMany({
@@ -63,10 +64,7 @@ export default async function HabitsPage() {
 
   const totalHabits = habits.length;
   const completedTodayCount = habits.filter((habit) =>
-    habit.entries.some((entry) => {
-      const key = entry.date.toISOString().slice(0, 10);
-      return key === today.toISOString().slice(0, 10);
-    }),
+    habit.entries.some((entry) => entry.date.toISOString().slice(0, 10) === todayKey),
   ).length;
   const completionPercentage =
     totalHabits > 0 ? Math.round((completedTodayCount / totalHabits) * 100) : 0;
@@ -88,10 +86,15 @@ export default async function HabitsPage() {
 
       <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <form action={createHabit} className="flex flex-col gap-4 sm:flex-row">
+          <label htmlFor="habit-name" className="sr-only">
+            Habit name
+          </label>
           <input
+            id="habit-name"
             type="text"
             name="name"
             placeholder="e.g. Morning walk"
+            required
             className="min-h-11 flex-1 rounded-xl border border-neutral-300 px-4 py-3 text-sm outline-none transition focus:border-neutral-500"
           />
           <SubmitButton label="Add habit" pendingLabel="Adding..." />
@@ -109,11 +112,9 @@ export default async function HabitsPage() {
         ) : (
           <ul className="space-y-3">
             {habits.map((habit) => {
-              const completedToday = habit.entries.some((entry) => {
-                const key = entry.date.toISOString().slice(0, 10);
-                return key === today.toISOString().slice(0, 10);
-              });
-
+              const completedToday = habit.entries.some(
+                (entry) => entry.date.toISOString().slice(0, 10) === todayKey,
+              );
               const streak = calculateStreakForHabit(
                 habit.entries.map((entry) => entry.date),
               );
@@ -136,7 +137,10 @@ export default async function HabitsPage() {
 
                   <div className="flex flex-wrap items-center gap-2">
                     {completedToday ? (
-                      <span className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700">
+                      <span
+                        role="status"
+                        className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700"
+                      >
                         Done
                       </span>
                     ) : (
