@@ -2,9 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
-import { archiveHabit, completeHabitForToday, createHabit } from "./actions";
+import { createHabit } from "./actions";
 import { SubmitButton } from "./submit-button";
-import { HabitHistory } from "./habit-history";
+import { HabitCard } from "./habit-card";
 import {
   calculateStreakForHabit,
   getDateDaysAgoUtc,
@@ -66,7 +66,7 @@ export default async function HabitsPage() {
     totalHabits > 0 ? Math.round((completedTodayCount / totalHabits) * 100) : 0;
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 px-6 py-10">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-10">
       <section className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-tight">Habits</h1>
         <p className="text-sm text-neutral-600">
@@ -106,76 +106,18 @@ export default async function HabitsPage() {
             description="Add your first habit above to start tracking your progress."
           />
         ) : (
-          <ul className="space-y-3">
-            {habits.map((habit) => {
-              const completedToday = habit.entries.some(
-                (entry) => entry.date.toISOString().slice(0, 10) === todayKey,
-              );
-              const streak = calculateStreakForHabit(
-                habit.entries.map((entry) => entry.date),
-              );
-
-              return (
-                <li
-                  key={habit.id}
-                  data-testid={`habit-item-${habit.id}`}
-                  className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm"
-                >
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-1">
-                      <p className="font-medium text-neutral-900">
-                        {habit.name}
-                      </p>
-                      <p className="text-sm text-neutral-500">
-                        {streak > 0 ? `${streak}-day streak` : "No streak yet"}
-                      </p>
-                      <p className="text-sm text-neutral-500">
-                        {completedToday
-                          ? "Completed today"
-                          : "Not completed yet"}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-                      {completedToday ? (
-                        <span
-                          role="status"
-                          className="inline-flex min-h-11 items-center rounded-xl bg-neutral-100 px-4 text-sm font-medium text-neutral-700"
-                        >
-                          Done
-                        </span>
-                      ) : (
-                        <form action={completeHabitForToday}>
-                          <input
-                            type="hidden"
-                            name="habitId"
-                            value={habit.id}
-                          />
-                          <SubmitButton
-                            label="Complete today"
-                            pendingLabel="Completing..."
-                          />
-                        </form>
-                      )}
-
-                      <form action={archiveHabit}>
-                        <input type="hidden" name="habitId" value={habit.id} />
-                        <SubmitButton
-                          label="Archive"
-                          pendingLabel="Archiving..."
-                          variant="secondary"
-                        />
-                      </form>
-                    </div>
-                  </div>
-
-                  <HabitHistory
-                    dates={habit.entries.map((entry) => entry.date)}
-                    today={today}
-                  />
-                </li>
-              );
-            })}
+          <ul className="grid gap-4 md:grid-cols-2">
+            {habits.map((habit) => (
+              <HabitCard
+                key={habit.id}
+                habit={habit}
+                todayKey={todayKey}
+                today={today}
+                streak={calculateStreakForHabit(
+                  habit.entries.map((entry) => entry.date),
+                )}
+              />
+            ))}
           </ul>
         )}
       </section>
