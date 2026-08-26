@@ -6,6 +6,7 @@ type HabitHistoryProps = {
 function dateKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
+
 export function HabitHistory({ dates, today }: HabitHistoryProps) {
   const completedDates = new Set(dates.map(dateKey));
 
@@ -24,9 +25,9 @@ export function HabitHistory({ dates, today }: HabitHistoryProps) {
   return (
     <div
       aria-label="Habit history for the last 30 days"
-      className="w-fit max-w-full"
+      className="w-fit min-w-[170px] max-w-full"
     >
-      <div className="flex items-center justify-between gap-6">
+      <div className="flex items-center justify-between gap-5">
         <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
           Last 30 days
         </p>
@@ -42,7 +43,7 @@ export function HabitHistory({ dates, today }: HabitHistoryProps) {
             key={dateKey(day.date)}
             title={`${day.completed ? "Completed" : "Not completed"} on ${dateKey(day.date)}`}
             aria-label={`${day.completed ? "Completed" : "Not completed"} on ${dateKey(day.date)}`}
-            className={`size-3 rounded-[2px] border ${
+            className={`size-3.5 rounded-[2px] border ${
               day.completed
                 ? "border-neutral-700 bg-neutral-700"
                 : "border-neutral-200 bg-neutral-50"
@@ -51,7 +52,7 @@ export function HabitHistory({ dates, today }: HabitHistoryProps) {
         ))}
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">
+      <div className="mt-2 flex items-center gap-3 whitespace-nowrap text-[11px] text-neutral-500">
         <span className="inline-flex items-center gap-1.5">
           <span
             aria-hidden="true"
