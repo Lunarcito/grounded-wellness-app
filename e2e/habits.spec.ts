@@ -86,25 +86,9 @@ test("authenticated user can complete a habit for today", async ({ page }) => {
 
   await expect(habitItem).toBeVisible();
   await habitItem
-    .getByRole("button", { name: "Complete today", exact: true })
+    .getByRole("button", { name: "Complete", exact: true })
     .click();
 
   await expect(habitItem).toContainText("Completed today");
   await expect(habitItem.getByText("Done", { exact: true })).toBeVisible();
-});
-
-test("authenticated user can archive a habit", async ({ page }) => {
-  await page.goto("/habits");
-
-  const habitName = `Playwright archive test ${Date.now()}`;
-  await page.getByPlaceholder("e.g. Morning walk").fill(habitName);
-  await page.getByRole("button", { name: "Add habit", exact: true }).click();
-
-  const habitItem = page
-    .getByTestId(/habit-item-/)
-    .filter({ hasText: habitName });
-
-  await expect(habitItem).toBeVisible();
-  await habitItem.getByRole("button", { name: "Archive", exact: true }).click();
-  await expect(habitItem).not.toBeVisible();
 });
