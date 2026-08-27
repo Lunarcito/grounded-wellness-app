@@ -59,8 +59,13 @@ function getDateKey(date: Date) {
 
 function getCurrentStreak(data: WeeklyHabitData[]) {
   let streak = 0;
+  let index = data.length - 1;
 
-  for (let index = data.length - 1; index >= 0; index -= 1) {
+  while (index >= 0 && data[index].completed === 0) {
+    index -= 1;
+  }
+
+  for (; index >= 0; index -= 1) {
     if (data[index].completed === 0) break;
     streak += 1;
   }
