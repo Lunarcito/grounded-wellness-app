@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ProgressMetric } from "../../../components/ui/progress-metric";
 import { formatCheckInLabel } from "./formatters";
-import Link from "next/link";
 
 type WeeklyHabitData = {
   label: string;
@@ -18,14 +18,14 @@ function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
 
   return (
     <div className="mt-6">
-      <div className="grid grid-cols-7 gap-2 sm:gap-3">
+      <div className="mx-auto grid max-w-xl grid-cols-7 gap-1.5 sm:gap-2">
         {data.map((day) => (
-          <div key={day.label} className="space-y-2 text-center">
-            <span className="block text-xs font-medium text-gray-500">
+          <div key={day.label} className="min-w-0 text-center">
+            <p className="mb-2 text-xs font-medium text-gray-500">
               {day.label}
-            </span>
+            </p>
             <div
-              className={`flex aspect-square items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
+              className={`mx-auto flex size-14 items-center justify-center rounded-xl border text-sm font-semibold transition-colors sm:size-16 ${
                 day.completed > 0
                   ? "border-gray-900 bg-gray-900 text-white"
                   : "border-gray-200 bg-gray-50 text-gray-400"
@@ -38,8 +38,8 @@ function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl bg-gray-50 p-4">
+      <div className="mx-auto mt-4 grid max-w-3xl gap-2 sm:grid-cols-2">
+        <div className="rounded-xl bg-gray-50 px-4 py-3">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
             Completed
           </p>
@@ -49,7 +49,7 @@ function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
           <p className="mt-1 text-sm text-gray-600">habit entries this week</p>
         </div>
 
-        <div className="rounded-xl bg-gray-50 p-4">
+        <div className="rounded-xl bg-gray-50 px-4 py-3">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
             Active days
           </p>
@@ -104,9 +104,7 @@ export default async function DashboardPage() {
 
   if (!user || !user.email) redirect("/login");
 
-  const profile = await prisma.profile.findUnique({
-    where: { id: user.id },
-  });
+  const profile = await prisma.profile.findUnique({ where: { id: user.id } });
 
   if (!profile || !profile.onboardingDone) redirect("/setup");
 
@@ -120,23 +118,16 @@ export default async function DashboardPage() {
 
   const dayOfWeek = today.getDay();
   const daysSinceMonday = (dayOfWeek + 6) % 7;
-
   const weekStart = new Date(today);
   weekStart.setDate(today.getDate() - daysSinceMonday);
 
   const [weeklyCheckIns, weeklyHabitEntries] = await Promise.all([
     prisma.dailyCheckIn.findMany({
-      where: {
-        profileId: user.id,
-        date: { gte: weekStart },
-      },
+      where: { profileId: user.id, date: { gte: weekStart } },
       orderBy: { date: "asc" },
     }),
     prisma.habitEntry.findMany({
-      where: {
-        profileId: user.id,
-        date: { gte: weekStart },
-      },
+      where: { profileId: user.id, date: { gte: weekStart } },
       select: { completed: true, date: true },
     }),
   ]);
@@ -163,7 +154,6 @@ export default async function DashboardPage() {
     const date = new Date(weekStart);
     date.setDate(weekStart.getDate() + index);
     const dayKey = getDateKey(date);
-
     const completed = weeklyHabitEntries.filter(
       (entry) => entry.completed && getDateKey(entry.date) === dayKey,
     ).length;
@@ -248,19 +238,17 @@ export default async function DashboardPage() {
 
       <section
         aria-labelledby="habit-consistency-title"
-        className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+        className="mt-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
       >
-        <div>
-          <h2
-            id="habit-consistency-title"
-            className="text-xl font-semibold text-gray-900"
-          >
-            Habit consistency
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Your completed habits over the last 7 days.
-          </p>
-        </div>
+        <h2
+          id="habit-consistency-title"
+          className="text-xl font-semibold text-gray-900"
+        >
+          Habit consistency
+        </h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Your completed habits over the last 7 days.
+        </p>
         <WeeklyHabitGrid data={weeklyHabitData} />
       </section>
 
