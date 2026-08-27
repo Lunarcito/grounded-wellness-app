@@ -90,5 +90,8 @@ test("authenticated user can complete a habit for today", async ({ page }) => {
     .click();
 
   await expect(habitItem).toContainText("Completed today");
-  await expect(habitItem.getByText("Done", { exact: true })).toBeVisible();
+  const completionStatus = habitItem.getByRole("status");
+
+  await expect(completionStatus).toBeVisible();
+  await expect(completionStatus).toContainText("Completed");
 });

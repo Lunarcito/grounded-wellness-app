@@ -1,6 +1,6 @@
-import { archiveHabit, completeHabitForToday } from "./actions";
-import { SubmitButton } from "./submit-button";
+import { completeHabitForToday } from "./actions";
 import { HabitHistory } from "./habit-history";
+import { SubmitButton } from "./submit-button";
 
 type HabitCardProps = {
   habit: {
@@ -8,58 +8,54 @@ type HabitCardProps = {
     name: string;
     entries: { date: Date }[];
   };
-  todayKey: string;
   today: Date;
+  todayKey: string;
   streak: number;
 };
 
-export function HabitCard({ habit, todayKey, today, streak }: HabitCardProps) {
+export function HabitCard({ habit, today, todayKey, streak }: HabitCardProps) {
   const completedToday = habit.entries.some(
     (entry) => entry.date.toISOString().slice(0, 10) === todayKey,
   );
 
+  const streakLabel =
+    streak > 0
+      ? `${streak} day${streak === 1 ? "" : "s"} streak`
+      : "No active streak";
+
   return (
     <li
       data-testid={`habit-item-${habit.id}`}
-      className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm"
+      className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
     >
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate font-medium text-neutral-900">
-              {habit.name}
+            <p className="truncate font-medium text-gray-900">{habit.name}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              {streakLabel}
+              <span aria-hidden="true"> · </span>
+              {completedToday ? "Completed today" : "Not completed yet"}
             </p>
-
-            <p className="mt-1 text-sm text-neutral-500">
-              Current streak: {streak} {streak === 1 ? "day" : "days"}
-              {completedToday ? " · Completed today" : ""}
-            </p>
-
-            {!completedToday && (
-              <p className="mt-1 text-sm text-neutral-500">Not completed yet</p>
-            )}
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
-            {completedToday ? (
-              <span
-                role="status"
-                className="inline-flex min-h-9 items-center rounded-lg bg-neutral-100 px-3 text-sm font-medium text-neutral-700"
-              >
-                Done
-              </span>
-            ) : (
-              <form action={completeHabitForToday}>
-                <input type="hidden" name="habitId" value={habit.id} />
-                <SubmitButton label="Complete" pendingLabel="..." />
-              </form>
-            )}
-
-            {/* Se añadirá cuando deleteHabit esté implementado */}
-          </div>
+          {completedToday ? (
+            <span
+              role="status"
+              className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-50 px-3 text-sm font-medium text-emerald-700"
+            >
+              <span aria-hidden="true">✓</span>
+              Completed
+            </span>
+          ) : (
+            <form action={completeHabitForToday} className="shrink-0">
+              <input type="hidden" name="habitId" value={habit.id} />
+              <SubmitButton label="Complete" pendingLabel="Completing..." />
+            </form>
+          )}
         </div>
 
-        <div className="border-t border-neutral-100 pt-3">
+        <div className="border-t border-gray-100 pt-3">
           <HabitHistory
             dates={habit.entries.map((entry) => entry.date)}
             today={today}

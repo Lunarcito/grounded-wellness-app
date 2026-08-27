@@ -23,17 +23,13 @@ export function HabitHistory({ dates, today }: HabitHistoryProps) {
   const completedCount = days.filter((day) => day.completed).length;
 
   return (
-    <div
-      aria-label="Habit history for the last 30 days"
-      className="w-fit min-w-[170px] max-w-full"
-    >
-      <div className="flex items-center justify-between gap-5">
-        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+    <div aria-label="Habit history for the last 30 days" className="w-fit">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
           Last 30 days
         </p>
-
-        <p className="shrink-0 text-xs text-neutral-500">
-          {completedCount} of {days.length} days
+        <p className="text-xs text-gray-500">
+          {completedCount} / {days.length}
         </p>
       </div>
 
@@ -45,26 +41,25 @@ export function HabitHistory({ dates, today }: HabitHistoryProps) {
             aria-label={`${day.completed ? "Completed" : "Not completed"} on ${dateKey(day.date)}`}
             className={`size-3.5 rounded-[2px] border ${
               day.completed
-                ? "border-neutral-700 bg-neutral-700"
-                : "border-neutral-200 bg-neutral-50"
+                ? "border-gray-700 bg-gray-700"
+                : "border-gray-200 bg-gray-50"
             }`}
           />
         ))}
       </div>
 
-      <div className="mt-2 flex items-center gap-3 whitespace-nowrap text-[11px] text-neutral-500">
+      <div className="mt-2 flex items-center gap-3 whitespace-nowrap text-[11px] text-gray-500">
         <span className="inline-flex items-center gap-1.5">
           <span
             aria-hidden="true"
-            className="size-2.5 rounded-[2px] border border-neutral-700 bg-neutral-700"
+            className="size-2.5 rounded-[2px] border border-gray-700 bg-gray-700"
           />
           Completed
         </span>
-
         <span className="inline-flex items-center gap-1.5">
           <span
             aria-hidden="true"
-            className="size-2.5 rounded-[2px] border border-neutral-200 bg-neutral-50"
+            className="size-2.5 rounded-[2px] border border-gray-200 bg-gray-50"
           />
           Not completed
         </span>
