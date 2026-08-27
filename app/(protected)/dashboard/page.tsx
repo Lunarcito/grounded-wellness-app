@@ -13,12 +13,9 @@ type WeeklyHabitData = {
 };
 
 function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
-  const totalCompleted = data.reduce((total, day) => total + day.completed, 0);
-  const activeDays = data.filter((day) => day.completed > 0).length;
-
   return (
     <div className="mt-6">
-      <div className="mx-auto grid max-w-xl grid-cols-7 gap-1.5 sm:gap-2">
+      <div className="mx-auto grid max-w-xl grid-cols-7 gap-1.5">
         {data.map((day) => (
           <div key={day.label} className="min-w-0 text-center">
             <p className="mb-2 text-xs font-medium text-gray-500">
@@ -36,31 +33,6 @@ function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mx-auto mt-4 grid max-w-3xl gap-2 sm:grid-cols-2">
-        <div className="rounded-xl bg-gray-50 px-4 py-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Completed
-          </p>
-          <p className="mt-1 text-2xl font-semibold text-gray-900">
-            {totalCompleted}
-          </p>
-          <p className="mt-1 text-sm text-gray-600">habit entries this week</p>
-        </div>
-
-        <div className="rounded-xl bg-gray-50 px-4 py-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Active days
-          </p>
-          <p className="mt-1 text-2xl font-semibold text-gray-900">
-            {activeDays}
-            <span className="text-base font-normal text-gray-500"> / 7</span>
-          </p>
-          <p className="mt-1 text-sm text-gray-600">
-            days with completed habits
-          </p>
-        </div>
       </div>
     </div>
   );
@@ -104,7 +76,9 @@ export default async function DashboardPage() {
 
   if (!user || !user.email) redirect("/login");
 
-  const profile = await prisma.profile.findUnique({ where: { id: user.id } });
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+  });
 
   if (!profile || !profile.onboardingDone) redirect("/setup");
 
@@ -118,16 +92,23 @@ export default async function DashboardPage() {
 
   const dayOfWeek = today.getDay();
   const daysSinceMonday = (dayOfWeek + 6) % 7;
+
   const weekStart = new Date(today);
   weekStart.setDate(today.getDate() - daysSinceMonday);
 
   const [weeklyCheckIns, weeklyHabitEntries] = await Promise.all([
     prisma.dailyCheckIn.findMany({
-      where: { profileId: user.id, date: { gte: weekStart } },
+      where: {
+        profileId: user.id,
+        date: { gte: weekStart },
+      },
       orderBy: { date: "asc" },
     }),
     prisma.habitEntry.findMany({
-      where: { profileId: user.id, date: { gte: weekStart } },
+      where: {
+        profileId: user.id,
+        date: { gte: weekStart },
+      },
       select: { completed: true, date: true },
     }),
   ]);
@@ -154,6 +135,7 @@ export default async function DashboardPage() {
     const date = new Date(weekStart);
     date.setDate(weekStart.getDate() + index);
     const dayKey = getDateKey(date);
+
     const completed = weeklyHabitEntries.filter(
       (entry) => entry.completed && getDateKey(entry.date) === dayKey,
     ).length;
@@ -165,6 +147,13 @@ export default async function DashboardPage() {
   });
 
   const currentStreak = getCurrentStreak(weeklyHabitData);
+  const totalWeeklyCompleted = weeklyHabitData.reduce(
+    (total, day) => total + day.completed,
+    0,
+  );
+  const activeHabitDays = weeklyHabitData.filter(
+    (day) => day.completed > 0,
+  ).length;
   const focusAreas = formatFocusAreas(profile.focusAreas);
   const firstName =
     profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
@@ -240,15 +229,43 @@ export default async function DashboardPage() {
         aria-labelledby="habit-consistency-title"
         className="mt-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
       >
-        <h2
-          id="habit-consistency-title"
-          className="text-xl font-semibold text-gray-900"
-        >
-          Habit consistency
-        </h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Your completed habits over the last 7 days.
-        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2
+              id="habit-consistency-title"
+              className="text-xl font-semibold text-gray-900"
+            >
+              Habit consistency
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Your completed habits over the last 7 days.
+            </p>
+          </div>
+
+          <div className="flex gap-5 sm:justify-end">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Completed
+              </p>
+              <p className="mt-1 text-lg font-semibold text-gray-900">
+                {totalWeeklyCompleted}
+              </p>
+              <p className="text-xs text-gray-500">entries this week</p>
+            </div>
+
+            <div className="border-l border-gray-200 pl-5">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Active days
+              </p>
+              <p className="mt-1 text-lg font-semibold text-gray-900">
+                {activeHabitDays}
+                <span className="text-sm font-normal text-gray-500"> / 7</span>
+              </p>
+              <p className="text-xs text-gray-500">days completed</p>
+            </div>
+          </div>
+        </div>
+
         <WeeklyHabitGrid data={weeklyHabitData} />
       </section>
 
