@@ -1,4 +1,5 @@
 import { completeHabitForToday } from "./actions";
+import { HabitActionsMenu } from "./habit-actions-menu";
 import { HabitHistory } from "./habit-history";
 import { SubmitButton } from "./submit-button";
 
@@ -39,20 +40,24 @@ export function HabitCard({ habit, today, todayKey, streak }: HabitCardProps) {
             </p>
           </div>
 
-          {completedToday ? (
-            <span
-              role="status"
-              className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-50 px-3 text-sm font-medium text-emerald-700"
-            >
-              <span aria-hidden="true">✓</span>
-              Completed
-            </span>
-          ) : (
-            <form action={completeHabitForToday} className="shrink-0">
-              <input type="hidden" name="habitId" value={habit.id} />
-              <SubmitButton label="Complete" pendingLabel="Completing..." />
-            </form>
-          )}
+          <div className="flex shrink-0 items-center gap-2">
+            {completedToday ? (
+              <span
+                role="status"
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-emerald-50 px-3 text-sm font-medium text-emerald-700"
+              >
+                <span aria-hidden="true">✓</span>
+                Completed
+              </span>
+            ) : (
+              <form action={completeHabitForToday}>
+                <input type="hidden" name="habitId" value={habit.id} />
+                <SubmitButton label="Complete" pendingLabel="Completing..." />
+              </form>
+            )}
+
+            <HabitActionsMenu habitId={habit.id} habitName={habit.name} />
+          </div>
         </div>
 
         <div className="border-t border-gray-100 pt-3">

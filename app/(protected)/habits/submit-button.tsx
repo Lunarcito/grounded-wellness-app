@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 type SubmitButtonProps = {
   label?: string;
   pendingLabel?: string;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
 };
 
 export function SubmitButton({
@@ -18,7 +18,9 @@ export function SubmitButton({
   const variantClasses =
     variant === "secondary"
       ? "border border-neutral-300 text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50 disabled:bg-neutral-100"
-      : "bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-400";
+      : variant === "danger"
+        ? "bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300"
+        : "bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-400";
 
   return (
     <button

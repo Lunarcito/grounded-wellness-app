@@ -35,10 +35,42 @@ async function getCurrentUserProfileId() {
   return user.id;
 }
 
+function getHabitId(formData: FormData) {
+  const habitIdValue = formData.get("habitId");
+
+  if (typeof habitIdValue !== "string" || !habitIdValue.trim()) {
+    throw new Error("Habit id is required.");
+  }
+
+  return habitIdValue.trim();
+}
+
+async function getActiveHabitForProfile(habitId: string, profileId: string) {
+  const habit = await prisma.habit.findFirst({
+    where: {
+      id: habitId,
+      profileId,
+      archivedAt: null,
+      isActive: true,
+    },
+    select: { id: true },
+  });
+
+  if (!habit) {
+    throw new Error("Habit not found.");
+  }
+
+  return habit;
+}
+
+function revalidateHabitPages() {
+  revalidatePath("/habits");
+  revalidatePath("/dashboard");
+}
+
 export async function createHabit(formData: FormData) {
   const profileId = await getCurrentUserProfileId();
   const nameValue = formData.get("name");
-
   const name =
     typeof nameValue === "string" && nameValue.trim().length > 0
       ? nameValue.trim()
@@ -48,6 +80,10 @@ export async function createHabit(formData: FormData) {
     throw new Error("Habit name is required.");
   }
 
+  if (name.length > 100) {
+    throw new Error("Habit name must be 100 characters or fewer.");
+  }
+
   await prisma.habit.create({
     data: {
       profileId,
@@ -55,36 +91,15 @@ export async function createHabit(formData: FormData) {
     },
   });
 
-  revalidatePath("/habits");
-  revalidatePath("/dashboard");
+  revalidateHabitPages();
 }
 
 export async function completeHabitForToday(formData: FormData) {
   const profileId = await getCurrentUserProfileId();
-  const habitIdValue = formData.get("habitId");
-
-  if (typeof habitIdValue !== "string" || !habitIdValue.trim()) {
-    throw new Error("Habit id is required.");
-  }
-
-  const habitId = habitIdValue.trim();
+  const habitId = getHabitId(formData);
   const today = getTodayDateUtc();
 
-  const habit = await prisma.habit.findFirst({
-    where: {
-      id: habitId,
-      profileId,
-      archivedAt: null,
-      isActive: true,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!habit) {
-    throw new Error("Habit not found.");
-  }
+  await getActiveHabitForProfile(habitId, profileId);
 
   await prisma.habitEntry.upsert({
     where: {
@@ -104,44 +119,44 @@ export async function completeHabitForToday(formData: FormData) {
     },
   });
 
-  revalidatePath("/habits");
-  revalidatePath("/dashboard");
+  revalidateHabitPages();
 }
 
-export async function archiveHabit(formData: FormData) {
+export async function updateHabit(formData: FormData) {
   const profileId = await getCurrentUserProfileId();
-  const habitIdValue = formData.get("habitId");
+  const habitId = getHabitId(formData);
+  const nameValue = formData.get("name");
+  const name =
+    typeof nameValue === "string" && nameValue.trim().length > 0
+      ? nameValue.trim()
+      : null;
 
-  if (typeof habitIdValue !== "string" || !habitIdValue.trim()) {
-    throw new Error("Habit id is required.");
+  if (!name) {
+    throw new Error("Habit name is required.");
   }
 
-  const habit = await prisma.habit.findFirst({
-    where: {
-      id: habitIdValue.trim(),
-      profileId,
-      archivedAt: null,
-      isActive: true,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!habit) {
-    throw new Error("Habit not found.");
+  if (name.length > 100) {
+    throw new Error("Habit name must be 100 characters or fewer.");
   }
+
+  const habit = await getActiveHabitForProfile(habitId, profileId);
 
   await prisma.habit.update({
-    where: {
-      id: habit.id,
-    },
-    data: {
-      isActive: false,
-      archivedAt: new Date(),
-    },
+    where: { id: habit.id },
+    data: { name },
   });
 
-  revalidatePath("/habits");
-  revalidatePath("/dashboard");
+  revalidateHabitPages();
+}
+
+export async function deleteHabit(formData: FormData) {
+  const profileId = await getCurrentUserProfileId();
+  const habitId = getHabitId(formData);
+  const habit = await getActiveHabitForProfile(habitId, profileId);
+
+  await prisma.habit.delete({
+    where: { id: habit.id },
+  });
+
+  revalidateHabitPages();
 }
