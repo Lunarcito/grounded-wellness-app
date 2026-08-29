@@ -57,17 +57,22 @@ function getDateKey(date: Date) {
   return date.toLocaleDateString("en-CA");
 }
 
-function getCurrentStreak(data: WeeklyHabitData[]) {
+function getCurrentStreak(
+  entries: Array<{ completed: boolean; date: Date }>,
+  today: Date,
+) {
+  const completedDates = new Set(
+    entries
+      .filter((entry) => entry.completed)
+      .map((entry) => getDateKey(entry.date)),
+  );
+
   let streak = 0;
-  let index = data.length - 1;
+  const currentDate = new Date(today);
 
-  while (index >= 0 && data[index].completed === 0) {
-    index -= 1;
-  }
-
-  for (; index >= 0; index -= 1) {
-    if (data[index].completed === 0) break;
+  while (completedDates.has(getDateKey(currentDate))) {
     streak += 1;
+    currentDate.setDate(currentDate.getDate() - 1);
   }
 
   return streak;
@@ -101,7 +106,7 @@ export default async function DashboardPage() {
   const weekStart = new Date(today);
   weekStart.setDate(today.getDate() - daysSinceMonday);
 
-  const [weeklyCheckIns, weeklyHabitEntries] = await Promise.all([
+  const [weeklyCheckIns, habitEntries] = await Promise.all([
     prisma.dailyCheckIn.findMany({
       where: {
         profileId: user.id,
@@ -112,11 +117,15 @@ export default async function DashboardPage() {
     prisma.habitEntry.findMany({
       where: {
         profileId: user.id,
-        date: { gte: weekStart },
+        date: { lte: today },
       },
       select: { completed: true, date: true },
     }),
   ]);
+
+  const weeklyHabitEntries = habitEntries.filter(
+    (entry) => entry.date >= weekStart,
+  );
 
   const completedHabits = weeklyHabitEntries.filter(
     (entry) => entry.completed,
@@ -151,7 +160,7 @@ export default async function DashboardPage() {
     };
   });
 
-  const currentStreak = getCurrentStreak(weeklyHabitData);
+  const currentStreak = getCurrentStreak(habitEntries, today);
   const totalWeeklyCompleted = weeklyHabitData.reduce(
     (total, day) => total + day.completed,
     0,
