@@ -12,6 +12,11 @@ type WeeklyHabitData = {
   completed: number;
 };
 
+type HabitEntryForStreak = {
+  completed: boolean;
+  date: Date;
+};
+
 function WeeklyHabitGrid({ data }: { data: WeeklyHabitData[] }) {
   return (
     <div className="mt-6">
@@ -57,25 +62,29 @@ function getDateKey(date: Date) {
   return date.toLocaleDateString("en-CA");
 }
 
-function getCurrentStreak(
-  entries: Array<{ completed: boolean; date: Date }>,
-  today: Date,
-) {
+function getCurrentStreak(entries: HabitEntryForStreak[], today: Date) {
   const completedDates = new Set(
     entries
       .filter((entry) => entry.completed)
       .map((entry) => getDateKey(entry.date)),
   );
 
-  let streak = 0;
-  const currentDate = new Date(today);
+  const todayKey = getDateKey(today);
+  const streakStart = new Date(today);
+  const completedToday = completedDates.has(todayKey);
 
-  while (completedDates.has(getDateKey(currentDate))) {
-    streak += 1;
-    currentDate.setDate(currentDate.getDate() - 1);
+  if (!completedToday) {
+    streakStart.setDate(streakStart.getDate() - 1);
   }
 
-  return streak;
+  let streak = 0;
+
+  while (completedDates.has(getDateKey(streakStart))) {
+    streak += 1;
+    streakStart.setDate(streakStart.getDate() - 1);
+  }
+
+  return { completedToday, streak };
 }
 
 export default async function DashboardPage() {
@@ -160,7 +169,10 @@ export default async function DashboardPage() {
     };
   });
 
-  const currentStreak = getCurrentStreak(habitEntries, today);
+  const { streak: currentStreak, completedToday } = getCurrentStreak(
+    habitEntries,
+    today,
+  );
   const totalWeeklyCompleted = weeklyHabitData.reduce(
     (total, day) => total + day.completed,
     0,
@@ -171,6 +183,12 @@ export default async function DashboardPage() {
   const focusAreas = formatFocusAreas(profile.focusAreas);
   const firstName =
     profile.displayName?.trim().split(" ")[0] || user.email.split("@")[0];
+  const currentStreakDescription =
+    currentStreak === 0
+      ? "Complete a habit to begin"
+      : completedToday
+        ? "Keep building your routine"
+        : "Complete a habit today to keep it going";
 
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-6 py-12">
@@ -223,13 +241,9 @@ export default async function DashboardPage() {
             }
           />
           <StatCard
-            label="Active streak"
+            label="Current streak"
             value={`${currentStreak} ${currentStreak === 1 ? "day" : "days"}`}
-            description={
-              currentStreak > 0
-                ? "Keep building your routine"
-                : "Complete a habit to begin"
-            }
+            description={currentStreakDescription}
           />
           <StatCard
             label="Average mood"
