@@ -3,15 +3,17 @@
 import { useFormStatus } from "react-dom";
 
 type SubmitButtonProps = {
-  label?: string;
-  pendingLabel?: string;
+  label: string;
+  pendingLabel: string;
   variant?: "primary" | "secondary" | "danger";
+  className?: string;
 };
 
 export function SubmitButton({
-  label = "Done today",
-  pendingLabel = "Saving...",
+  label,
+  pendingLabel,
   variant = "primary",
+  className = "",
 }: SubmitButtonProps) {
   const { pending } = useFormStatus();
 
@@ -26,7 +28,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className={`min-h-11 rounded-xl px-4 py-3 text-sm font-medium transition disabled:cursor-not-allowed ${variantClasses}`}
+      className={`inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-3 text-sm font-medium transition disabled:cursor-not-allowed ${variantClasses} ${className}`}
     >
       {pending ? pendingLabel : label}
     </button>

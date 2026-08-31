@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { deleteHabit, updateHabit } from "./actions";
-import { SubmitButton } from "./submit-button";
+import { SubmitButton } from "../../../components/ui/submit-button";
 
 type HabitActionsMenuProps = {
   habitId: string;

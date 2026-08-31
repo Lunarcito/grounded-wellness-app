@@ -1,7 +1,7 @@
 import { completeHabitForToday } from "./actions";
 import { HabitActionsMenu } from "./habit-actions-menu";
 import { HabitHistory } from "./habit-history";
-import { SubmitButton } from "./submit-button";
+import { SubmitButton } from "../../../components/ui/submit-button";
 
 type HabitCardProps = {
   habit: {

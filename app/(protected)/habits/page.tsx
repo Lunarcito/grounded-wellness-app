@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "../../../components/ui/stat-card";
 import { createHabit } from "./actions";
-import { SubmitButton } from "./submit-button";
+import { SubmitButton } from "../../../components/ui/submit-button";
 import { HabitCard } from "./habit-card";
 import {
   calculateStreakForHabit,
