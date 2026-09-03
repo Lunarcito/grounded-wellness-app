@@ -11,6 +11,7 @@ import {
   getTodayDateUtc,
 } from "./utils";
 import { EmptyState } from "../../../components/ui/empty-state";
+import { getTodayInTimezone } from "@/lib/dates";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -30,9 +31,10 @@ export default async function HabitsPage() {
     redirect("/setup");
   }
 
-  const today = getTodayDateUtc();
-  const todayKey = today.toISOString().slice(0, 10);
-  const thirtyDaysAgo = getDateDaysAgoUtc(29);
+  const timezone = profile.timezone || "Europe/Madrid";
+  const todayKey = getTodayInTimezone(timezone);
+  const today = getTodayDateUtc(new Date(), timezone);
+  const thirtyDaysAgo = getDateDaysAgoUtc(29, new Date(), timezone);
 
   const habits = await prisma.habit.findMany({
     where: {
@@ -59,7 +61,10 @@ export default async function HabitsPage() {
   const totalHabits = habits.length;
   const completedTodayCount = habits.filter((habit) =>
     habit.entries.some(
-      (entry) => entry.date.toISOString().slice(0, 10) === todayKey,
+      (entry) =>
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: timezone,
+        }).format(entry.date) === todayKey,
     ),
   ).length;
   const completionPercentage =
@@ -113,8 +118,11 @@ export default async function HabitsPage() {
                 habit={habit}
                 todayKey={todayKey}
                 today={today}
+                timezone={timezone}
                 streak={calculateStreakForHabit(
                   habit.entries.map((entry) => entry.date),
+                  new Date(),
+                  timezone,
                 )}
               />
             ))}

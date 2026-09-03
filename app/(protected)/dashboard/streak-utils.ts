@@ -27,6 +27,12 @@ export function calculateActiveStreak(
       .map((entry) => toDateKey(entry.date)),
   );
 
+  const todayKey = toDateKey(now);
+
+  if (!completedDates.has(todayKey)) {
+    return 0;
+  }
+
   let streak = 0;
 
   for (let daysAgo = 0; daysAgo < 365; daysAgo += 1) {

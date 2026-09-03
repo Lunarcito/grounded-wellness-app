@@ -6,6 +6,7 @@ import { StatCard } from "../../../components/ui/stat-card";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { ProgressMetric } from "../../../components/ui/progress-metric";
 import { formatCheckInLabel } from "./formatters";
+import { getTodayInTimezone } from "@/lib/dates";
 
 type WeeklyHabitData = {
   label: string;
@@ -58,30 +59,41 @@ function formatFocusAreas(value: string | null) {
     );
 }
 
-function getDateKey(date: Date) {
-  return date.toLocaleDateString("en-CA");
+function getDateKey(date: Date, timezone: string) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+  }).format(new Date(date));
 }
 
-function getCurrentStreak(entries: HabitEntryForStreak[], today: Date) {
+function getCalendarDate(dateKey: string) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function addDays(dateKey: string, days: number) {
+  const date = getCalendarDate(dateKey);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function getCurrentStreak(
+  entries: HabitEntryForStreak[],
+  todayKey: string,
+  timezone: string,
+) {
   const completedDates = new Set(
     entries
       .filter((entry) => entry.completed)
-      .map((entry) => getDateKey(entry.date)),
+      .map((entry) => getDateKey(entry.date, timezone)),
   );
 
-  const todayKey = getDateKey(today);
-  const streakStart = new Date(today);
   const completedToday = completedDates.has(todayKey);
-
-  if (!completedToday) {
-    streakStart.setDate(streakStart.getDate() - 1);
-  }
-
+  let cursor = completedToday ? todayKey : addDays(todayKey, -1);
   let streak = 0;
 
-  while (completedDates.has(getDateKey(streakStart))) {
+  while (completedDates.has(cursor)) {
     streak += 1;
-    streakStart.setDate(streakStart.getDate() - 1);
+    cursor = addDays(cursor, -1);
   }
 
   return { completedToday, streak };
@@ -101,40 +113,41 @@ export default async function DashboardPage() {
 
   if (!profile || !profile.onboardingDone) redirect("/setup");
 
+  const timezone = profile.timezone || "Europe/Madrid";
+  const todayKey = getTodayInTimezone(timezone);
+  const today = getCalendarDate(todayKey);
+  const dayOfWeek = today.getUTCDay();
+  const daysSinceMonday = (dayOfWeek + 6) % 7;
+  const weekStartKey = addDays(todayKey, -daysSinceMonday);
+  const weekStart = getCalendarDate(weekStartKey);
+  const nextDay = getCalendarDate(addDays(todayKey, 1));
+
   const latestCheckIn = await prisma.dailyCheckIn.findFirst({
     where: { profileId: user.id },
     orderBy: { date: "desc" },
   });
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const dayOfWeek = today.getDay();
-  const daysSinceMonday = (dayOfWeek + 6) % 7;
-
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - daysSinceMonday);
-
   const [weeklyCheckIns, habitEntries] = await Promise.all([
     prisma.dailyCheckIn.findMany({
       where: {
         profileId: user.id,
-        date: { gte: weekStart },
+        date: { gte: weekStart, lt: nextDay },
       },
       orderBy: { date: "asc" },
     }),
     prisma.habitEntry.findMany({
       where: {
         profileId: user.id,
-        date: { lte: today },
+        date: { lte: nextDay },
       },
       select: { completed: true, date: true },
     }),
   ]);
 
-  const weeklyHabitEntries = habitEntries.filter(
-    (entry) => entry.date >= weekStart,
-  );
+  const weeklyHabitEntries = habitEntries.filter((entry) => {
+    const key = getDateKey(entry.date, timezone);
+    return key >= weekStartKey && key <= todayKey;
+  });
 
   const completedHabits = weeklyHabitEntries.filter(
     (entry) => entry.completed,
@@ -155,23 +168,25 @@ export default async function DashboardPage() {
       : null;
 
   const weeklyHabitData = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(weekStart);
-    date.setDate(weekStart.getDate() + index);
-    const dayKey = getDateKey(date);
-
+    const dateKey = addDays(weekStartKey, index);
     const completed = weeklyHabitEntries.filter(
-      (entry) => entry.completed && getDateKey(entry.date) === dayKey,
+      (entry) =>
+        entry.completed && getDateKey(entry.date, timezone) === dateKey,
     ).length;
 
     return {
-      label: date.toLocaleDateString("en-US", { weekday: "short" }),
+      label: getCalendarDate(dateKey).toLocaleDateString("en-US", {
+        weekday: "short",
+        timeZone: "UTC",
+      }),
       completed,
     };
   });
 
   const { streak: currentStreak, completedToday } = getCurrentStreak(
     habitEntries,
-    today,
+    todayKey,
+    timezone,
   );
   const totalWeeklyCompleted = weeklyHabitData.reduce(
     (total, day) => total + day.completed,

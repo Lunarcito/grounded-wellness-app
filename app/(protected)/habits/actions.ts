@@ -2,20 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTodayDateInTimeZone, isValidTimeZone } from "@/lib/dates";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 
-function getTodayDateUtc() {
-  const now = new Date();
+function getTimeZone(formData: FormData, fallback: string) {
+  const value = formData.get("timezone");
 
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
+  if (typeof value === "string" && isValidTimeZone(value)) {
+    return value;
+  }
+
+  return fallback;
 }
 
-async function getCurrentUserProfileId() {
+async function getCurrentUserProfile() {
   const supabase = await createClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -26,13 +28,18 @@ async function getCurrentUserProfileId() {
 
   const profile = await prisma.profile.findUnique({
     where: { id: user.id },
+    select: {
+      id: true,
+      onboardingDone: true,
+      timezone: true,
+    },
   });
 
   if (!profile || !profile.onboardingDone) {
     redirect("/setup");
   }
 
-  return user.id;
+  return profile;
 }
 
 function getHabitId(formData: FormData) {
@@ -69,7 +76,7 @@ function revalidateHabitPages() {
 }
 
 export async function createHabit(formData: FormData) {
-  const profileId = await getCurrentUserProfileId();
+  const profile = await getCurrentUserProfile();
   const nameValue = formData.get("name");
   const name =
     typeof nameValue === "string" && nameValue.trim().length > 0
@@ -86,7 +93,7 @@ export async function createHabit(formData: FormData) {
 
   await prisma.habit.create({
     data: {
-      profileId,
+      profileId: profile.id,
       name,
     },
   });
@@ -95,11 +102,19 @@ export async function createHabit(formData: FormData) {
 }
 
 export async function completeHabitForToday(formData: FormData) {
-  const profileId = await getCurrentUserProfileId();
+  const profile = await getCurrentUserProfile();
   const habitId = getHabitId(formData);
-  const today = getTodayDateUtc();
+  const timezone = getTimeZone(formData, profile.timezone);
+  const today = getTodayDateInTimeZone(timezone);
 
-  await getActiveHabitForProfile(habitId, profileId);
+  await getActiveHabitForProfile(habitId, profile.id);
+
+  if (timezone !== profile.timezone) {
+    await prisma.profile.update({
+      where: { id: profile.id },
+      data: { timezone },
+    });
+  }
 
   await prisma.habitEntry.upsert({
     where: {
@@ -112,7 +127,7 @@ export async function completeHabitForToday(formData: FormData) {
       completed: true,
     },
     create: {
-      profileId,
+      profileId: profile.id,
       habitId,
       date: today,
       completed: true,
@@ -123,7 +138,7 @@ export async function completeHabitForToday(formData: FormData) {
 }
 
 export async function updateHabit(formData: FormData) {
-  const profileId = await getCurrentUserProfileId();
+  const profile = await getCurrentUserProfile();
   const habitId = getHabitId(formData);
   const nameValue = formData.get("name");
   const name =
@@ -139,7 +154,7 @@ export async function updateHabit(formData: FormData) {
     throw new Error("Habit name must be 100 characters or fewer.");
   }
 
-  const habit = await getActiveHabitForProfile(habitId, profileId);
+  const habit = await getActiveHabitForProfile(habitId, profile.id);
 
   await prisma.habit.update({
     where: { id: habit.id },
@@ -150,9 +165,9 @@ export async function updateHabit(formData: FormData) {
 }
 
 export async function deleteHabit(formData: FormData) {
-  const profileId = await getCurrentUserProfileId();
+  const profile = await getCurrentUserProfile();
   const habitId = getHabitId(formData);
-  const habit = await getActiveHabitForProfile(habitId, profileId);
+  const habit = await getActiveHabitForProfile(habitId, profile.id);
 
   await prisma.habit.delete({
     where: { id: habit.id },

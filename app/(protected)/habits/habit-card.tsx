@@ -2,6 +2,7 @@ import { completeHabitForToday } from "./actions";
 import { HabitActionsMenu } from "./habit-actions-menu";
 import { HabitHistory } from "./habit-history";
 import { SubmitButton } from "../../../components/ui/submit-button";
+import { TimezoneInput } from "../../../components/ui/timezone-input";
 
 type HabitCardProps = {
   habit: {
@@ -11,14 +12,23 @@ type HabitCardProps = {
   };
   today: Date;
   todayKey: string;
+  timezone: string;
   streak: number;
 };
 
-export function HabitCard({ habit, today, todayKey, streak }: HabitCardProps) {
+export function HabitCard({
+  habit,
+  today,
+  todayKey,
+  timezone,
+  streak,
+}: HabitCardProps) {
   const completedToday = habit.entries.some(
-    (entry) => entry.date.toISOString().slice(0, 10) === todayKey,
+    (entry) =>
+      new Intl.DateTimeFormat("en-CA", {
+        timeZone: timezone,
+      }).format(entry.date) === todayKey,
   );
-
   const streakLabel =
     streak > 0
       ? `${streak} day${streak === 1 ? "" : "s"} streak`
@@ -52,6 +62,7 @@ export function HabitCard({ habit, today, todayKey, streak }: HabitCardProps) {
             ) : (
               <form action={completeHabitForToday}>
                 <input type="hidden" name="habitId" value={habit.id} />
+                <TimezoneInput />
                 <SubmitButton label="Complete" pendingLabel="Completing..." />
               </form>
             )}
