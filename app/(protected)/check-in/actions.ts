@@ -1,9 +1,10 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getTodayDateInTimeZone, isValidTimeZone } from "@/lib/dates";
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 
 function toOptionalNumber(value: FormDataEntryValue | null): number | null {
   if (typeof value !== "string" || value.trim() === "") {
@@ -71,17 +72,18 @@ function getOptionalNonNegativeNumber(
   return parsed;
 }
 
-function getTodayDateUtc() {
-  const now = new Date();
+function getTimeZone(formData: FormData, fallback: string) {
+  const value = formData.get("timezone");
 
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
+  if (typeof value === "string" && isValidTimeZone(value)) {
+    return value;
+  }
+
+  return fallback;
 }
 
 export async function saveDailyCheckIn(formData: FormData) {
   const supabase = await createClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -92,6 +94,11 @@ export async function saveDailyCheckIn(formData: FormData) {
 
   const profile = await prisma.profile.findUnique({
     where: { id: user.id },
+    select: {
+      id: true,
+      onboardingDone: true,
+      timezone: true,
+    },
   });
 
   if (!profile || !profile.onboardingDone) {
@@ -119,13 +126,20 @@ export async function saveDailyCheckIn(formData: FormData) {
     formData.get("movementMin"),
     "movement minutes",
   );
+  const timezone = getTimeZone(formData, profile.timezone);
+  const today = getTodayDateInTimeZone(timezone);
 
-  const today = getTodayDateUtc();
+  if (timezone !== profile.timezone) {
+    await prisma.profile.update({
+      where: { id: profile.id },
+      data: { timezone },
+    });
+  }
 
   await prisma.dailyCheckIn.upsert({
     where: {
       profileId_date: {
-        profileId: user.id,
+        profileId: profile.id,
         date: today,
       },
     },
@@ -138,7 +152,7 @@ export async function saveDailyCheckIn(formData: FormData) {
       movementMin,
     },
     create: {
-      profileId: user.id,
+      profileId: profile.id,
       date: today,
       moodScore,
       energyScore,

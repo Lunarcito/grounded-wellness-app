@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { TimezoneInput } from "../../components/ui/timezone-input";
 import { completeSetup } from "./actions";
 
 export default async function SetupPage() {
@@ -50,6 +51,8 @@ export default async function SetupPage() {
         action={completeSetup}
         className="space-y-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
       >
+        <TimezoneInput />
+
         <section className="space-y-4">
           <div>
             <label

@@ -1,17 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getTodayDateInTimeZone } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { saveDailyCheckIn } from "./actions";
+import { TimezoneInput } from "../../../components/ui/timezone-input";
 import { SubmitButton } from "../../../components/ui/submit-button";
-
-function getTodayDateUtc() {
-  const now = new Date();
-
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
-}
+import { saveDailyCheckIn } from "./actions";
 
 export default async function CheckInPage() {
   const supabase = await createClient();
@@ -28,15 +22,11 @@ export default async function CheckInPage() {
     where: { id: user.id },
   });
 
-  if (!profile) {
+  if (!profile || !profile.onboardingDone) {
     redirect("/setup");
   }
 
-  if (!profile.onboardingDone) {
-    redirect("/setup");
-  }
-
-  const today = getTodayDateUtc();
+  const today = getTodayDateInTimeZone(profile.timezone);
 
   const existingCheckIn = await prisma.dailyCheckIn.findUnique({
     where: {
@@ -72,6 +62,8 @@ export default async function CheckInPage() {
         action={saveDailyCheckIn}
         className="space-y-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
       >
+        <TimezoneInput />
+
         <section className="grid gap-6 sm:grid-cols-2">
           <div>
             <label
